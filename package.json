@@ -1,0 +1,30 @@
+{
+  "name": "gamedong-engine",
+  "version": "1.0.0",
+  "description": "JS game engine made with love by GameDong",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://qphilippot@bitbucket.org/gamedong/gamedong-engine.git"
+  },
+  "keywords": [
+    "game",
+    "engine",
+    "js"
+  ],
+  "author": "GameDong",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/gamedong/gamedong-engine#readme",
+  "dependencies": {
+    "webpack": "^4.35.3",
+    "webpack-cli": "^3.3.5"
+  },
+  "devDependencies": {
+    "clean-webpack-plugin": "^3.0.0",
+    "html-webpack-plugin": "^3.2.0"
+  }
+}
