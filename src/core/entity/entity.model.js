@@ -9,12 +9,12 @@ class Entity {
         settings = Object.assign(JSON.parse(JSON.stringify(configuration)), settings);
         
         this.name = settings.name;
-        this.event = new EventEmitter();
 
         this.initialize_skills(settings);
 
         this.skills = {};
         this.data = {};
+        this.ui = {};
         this.services = settings.services;
         this.strictMode = settings.strictMode;
         this.verboseMode = settings.verboseMode;
@@ -30,6 +30,11 @@ class Entity {
         }
     }
 
+    setupListener(settings) {
+        this.listeners = [];
+    }
+
+    
     init_id(settings) {
         this.entity_id = `entity_${++counter}`;
         if (typeof settings._id === 'undefined') {
@@ -94,15 +99,31 @@ class Entity {
     }
 
     emit(eventName, data) {
-        this.event.emit(eventName, data);
+        // this.event.emit(eventName, data);
     }
 
-    on(eventName, handler) {
-        this.event.on(eventName, handler);
+    listen(eventName, handler) {
+        this.addEventListener(eventName, handler);
+
+        this.listeners = [{
+            eventName: eventName,
+            handler: handler
+        }];
     }
 
     store(attributeName, attributeValue) {
         this.data[attributeName] = attributeValue;
+    }
+
+    //https://stackoverflow.com/questions/494143/creating-a-new-dom-element-from-an-html-string-using-built-in-dom-methods-or-pro/35385518#35385518
+    /**
+    * @param {String} htmlString representing a single element
+    * @return {Element}
+    */
+   generateDOM(htmlString = '') {
+        const template = document.createElement('template');
+        template.innerHTML = htmlString.trim();
+        return template.content.firstChild;
     }
 
     get(attributeName) {
@@ -148,8 +169,20 @@ class Entity {
         }
     }
 
-    die() {
-        
+    removeListener(listener) {
+        this.removeEventListener(listener.eventName, listener.handler)
+    }
+
+    removeAllListeners() {
+        this.listeners.forEach(
+            listener => {
+                this.removeListener(listener)
+            }
+        );
+    }
+
+    destroy() {
+        this.removeAllListeners();
     }
 }
 

@@ -546,10 +546,89 @@ function unwrapListeners(arr) {
 
 /***/ }),
 
-/***/ "./src/core/entity.model.config.js":
-/*!*****************************************!*\
-  !*** ./src/core/entity.model.config.js ***!
-  \*****************************************/
+/***/ "./src/core/controllers/mouse.controller.js":
+/*!**************************************************!*\
+  !*** ./src/core/controllers/mouse.controller.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Entity = __webpack_require__(/*! ../entity/entity.model */ "./src/core/entity/entity.model.js")
+
+class MouseController extends Entity {
+    constructor(settings = {}) {
+        super(settings);
+
+        this.component = settings.component;
+    }
+
+    onMouseMove(event) {
+        console.log('mouse move', event);
+    }
+
+    onLeftClick(event) {
+        console.log('mouse left click', event);
+    }
+
+    onRightClick(event) {
+        console.log('mouse right click', event);
+    } 
+
+    onMouseWheel(event) {
+        console.log('mouse wheel', event);
+    }
+
+    onMouseDown(event) {
+        event = event || window.event;
+        let button = 0;
+        
+        if (typeof event.buttons === 'undefined') {
+            button = event.which || event.button;
+        }
+
+        switch(button) {
+            case MouseController.LEFT_CLICK:
+                this.onLeftClick(event);
+                break;
+            case MouseController.RIGHT_CLICK:  
+                this.onRightClick(event);
+                break;
+        }
+    }
+
+
+    static isLeftClick(event) {
+        // https://stackoverflow.com/questions/3944122/detect-left-mouse-button-press
+        event = event || window.event;
+        if (typeof event.buttons !== 'undefined') {
+            return event.buttons == 1;
+        }
+
+        const button = event.which || event.button;
+        return button == 1;
+    }
+
+    static isRightClick(event) {
+        event = event || window.event;
+        if (typeof event.buttons !== 'undefined') {
+            return event.buttons == 0;
+        }
+
+        const button = event.which || event.button;
+        return button == 0;
+    }
+}
+
+MouseController.LEFT_CLICK = 1;
+MouseController.RIGHT_CLICK = 2;
+module.exports = MouseController;
+
+/***/ }),
+
+/***/ "./src/core/entity/entity.model.config.js":
+/*!************************************************!*\
+  !*** ./src/core/entity/entity.model.config.js ***!
+  \************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -566,15 +645,15 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./src/core/entity.model.js":
-/*!**********************************!*\
-  !*** ./src/core/entity.model.js ***!
-  \**********************************/
+/***/ "./src/core/entity/entity.model.js":
+/*!*****************************************!*\
+  !*** ./src/core/entity/entity.model.js ***!
+  \*****************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js").EventEmitter;
-const configuration = __webpack_require__(/*! ./entity.model.config */ "./src/core/entity.model.config.js");
+const configuration = __webpack_require__(/*! ./entity.model.config */ "./src/core/entity/entity.model.config.js");
 
 let counter = 0;
 
@@ -584,12 +663,12 @@ class Entity {
         settings = Object.assign(JSON.parse(JSON.stringify(configuration)), settings);
         
         this.name = settings.name;
-        this.event = new EventEmitter();
 
         this.initialize_skills(settings);
 
         this.skills = {};
         this.data = {};
+        this.ui = {};
         this.services = settings.services;
         this.strictMode = settings.strictMode;
         this.verboseMode = settings.verboseMode;
@@ -605,6 +684,11 @@ class Entity {
         }
     }
 
+    setupListener(settings) {
+        this.listeners = [];
+    }
+
+    
     init_id(settings) {
         this.entity_id = `entity_${++counter}`;
         if (typeof settings._id === 'undefined') {
@@ -669,15 +753,31 @@ class Entity {
     }
 
     emit(eventName, data) {
-        this.event.emit(eventName, data);
+        // this.event.emit(eventName, data);
     }
 
-    on(eventName, handler) {
-        this.event.on(eventName, handler);
+    listen(eventName, handler) {
+        this.addEventListener(eventName, handler);
+
+        this.listeners = [{
+            eventName: eventName,
+            handler: handler
+        }];
     }
 
     store(attributeName, attributeValue) {
         this.data[attributeName] = attributeValue;
+    }
+
+    //https://stackoverflow.com/questions/494143/creating-a-new-dom-element-from-an-html-string-using-built-in-dom-methods-or-pro/35385518#35385518
+    /**
+    * @param {String} htmlString representing a single element
+    * @return {Element}
+    */
+   generateDOM(htmlString = '') {
+        const template = document.createElement('template');
+        template.innerHTML = htmlString.trim();
+        return template.content.firstChild;
     }
 
     get(attributeName) {
@@ -723,12 +823,239 @@ class Entity {
         }
     }
 
-    die() {
-        
+    removeListener(listener) {
+        this.removeEventListener(listener.eventName, listener.handler)
+    }
+
+    removeAllListeners() {
+        this.listeners.forEach(
+            listener => {
+                this.removeListener(listener)
+            }
+        );
+    }
+
+    destroy() {
+        this.removeAllListeners();
     }
 }
 
 module.exports = Entity;
+
+/***/ }),
+
+/***/ "./src/core/viewport/index.js":
+/*!************************************!*\
+  !*** ./src/core/viewport/index.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! ./viewport.model */ "./src/core/viewport/viewport.model.js");
+
+/***/ }),
+
+/***/ "./src/core/viewport/viewport.model.js":
+/*!*********************************************!*\
+  !*** ./src/core/viewport/viewport.model.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Entity = __webpack_require__(/*! ../entity/entity.model */ "./src/core/entity/entity.model.js");
+const MouseController = __webpack_require__(/*! ./viewport.mouse.controller */ "./src/core/viewport/viewport.mouse.controller.js");
+
+class ViewPort extends Entity {
+    constructor(settings = {}) {
+        super(settings);
+        this.ui.layout = document.createElement('canvas');
+
+        this.initViewPort(settings);
+    }
+
+    initControllers() {
+        this.controllers = {};
+
+        this.initMouseController();
+    }
+
+    initMouseController() {
+        this.controllers.mouse = new MouseController({
+            component: this
+        });
+    }
+
+    setupViewPortListeners() {
+        const layout = this.ui.layout;
+
+        this.initControllers();
+        layout.addEventListener('mousemove', (event) => {
+            this.controllers.mouse.onMouseMove(event);
+        });
+
+        layout.addEventListener('mousedown', (event) => {
+           this.controllers.mouse.onMouseDown(event);
+        });
+    }
+
+    initViewPort(settings) {
+        const layout = this.ui.layout; 
+        layout.classList.add('gd-viewport');
+
+        this.data.size = {
+            width: 0,
+            height: 0,
+        };
+
+        this.data.ratio = {
+            x: 1,
+            y: 1
+        };
+
+        this.data.resolution = {
+            width: 0,
+            height: 0,
+        };
+
+        // this.setPixelDensity(1);
+        this.setSize(300, 300, false);
+        this.setResolution(300, 300);
+
+       
+        
+        // todo implements tests
+        if (typeof settings.container !== 'string') {
+            this.notifyError(new Error(`Invalid type for param 'container', a string was expected`));
+        }
+
+        const container = document.getElementById(settings.container);
+        
+        // todo implements tests
+        if ((container instanceof Element) === false) {
+            this.notifyError(new Error(`No Element found with id ${settings.container}`));
+        }
+        
+    
+        this.setupViewPortListeners();
+        this.ui.container = container;
+        container.appendChild(layout);
+    }
+
+    setSize(width, height, refreshRatio = true) {
+        this.data.size.width = width;
+        this.data.size.height = height;
+
+        this.ui.layout.style.width = width + 'px';
+        this.ui.layout.style.height = height + 'px';
+        
+        if (refreshRatio === true) {
+            this.updateRatio();
+        }
+    }
+
+    getSize() {
+        return JSON.parse(JSON.stringify(this.data.size));
+    }
+
+    getWidth() {
+        return this.data.size.width;
+    }
+
+    getHeight() {
+        return this.data.size.height;
+    }
+
+    getInnerWidth() {
+        return this.data.resolution.width;
+    }
+
+    getInnerHeight() {
+        return this.data.resolution.height;
+    }
+
+    getResolution() {
+        return JSON.parse(JSON.stringify(this.data.resolution));
+    }
+
+    setResolution(width, height, refreshRatio = true) {
+        this.ui.layout.width = width;
+        this.ui.layout.height = height;
+
+        this.data.resolution.width = width;
+        this.data.resolution.height = height;
+
+
+        if (refreshRatio === true) {
+            this.updateRatio();
+        }
+    }
+
+    updateRatio() {
+        if (this.data.size.width === 0 || this.data.size.height === 0) {
+            this.data.ratio.x = 1;
+            this.data.ratio.y = 1;
+        }
+
+        else {
+            this.data.ratio.x = this.data.resolution.width / this.data.size.width;
+            this.data.ratio.y = this.data.resolution.height / this.data.size.height;
+        }
+    }
+
+    getPixelsCoordsFromPageCoords(coords) {
+        const x = coords.x - this.ui.layout.offsetLeft + window.scrollX;
+        const y = coords.y - this.ui.layout.offsetTop + window.scrollY;
+
+        console.log('htmlCoordsToCanvasPixelsCoords', x, y);
+
+        return {x, y};
+    }
+
+
+    getCellCoordsFromPixelCoords(coords) {
+        const ratio = this.data.ratio;
+        const x = Math.floor(coords.x * ratio.x);
+        const y =  Math.floor(coords.y * ratio.y);
+        console.log('getCellCoordsFromPixelCoords', x, y);
+
+        return {x, y};
+    }
+}
+
+
+if (typeof window !== 'undefined') {
+    if (typeof window.GameDong === 'undefined') {
+        window.GameDong = {};
+    } 
+
+    window.GameDong.ViewPort = ViewPort;
+}
+
+module.exports = ViewPort;
+
+/***/ }),
+
+/***/ "./src/core/viewport/viewport.mouse.controller.js":
+/*!********************************************************!*\
+  !*** ./src/core/viewport/viewport.mouse.controller.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const MouseController = __webpack_require__(/*! ../controllers/mouse.controller */ "./src/core/controllers/mouse.controller.js");
+
+class ViewPortMouseController extends MouseController {
+    constructor(settings) {
+       super(settings);
+    }
+
+    onMouseMove(event) {
+        const pixelCoords = this.component.getPixelsCoordsFromPageCoords(event);
+        this.component.getCellCoordsFromPixelCoords(pixelCoords);
+    }
+}
+
+module.exports = ViewPortMouseController;
 
 /***/ }),
 
@@ -739,13 +1066,24 @@ module.exports = Entity;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const Entity = __webpack_require__(/*! ../core/entity.model */ "./src/core/entity.model.js");
+const Entity = __webpack_require__(/*! ../core/entity/entity.model */ "./src/core/entity/entity.model.js");
 class Map extends Entity {
     constructor(settings = {}) {
         super(settings);
 
-        console.log('new map');
+        this.data.nbRows = settings.nbRows || 10;
+        this.data.nbColumns = settings.nbColumns || 10;
+
+        console.log('new map', settings);
     }
+}
+
+if (typeof window !== 'undefined') {
+    if (typeof window.Map === 'undefined') {
+        window.Map = {};
+    } 
+
+    window.GameDong.Map = Map;
 }
 
 module.exports = Map;
@@ -753,12 +1091,13 @@ module.exports = Map;
 /***/ }),
 
 /***/ 0:
-/*!************************************!*\
-  !*** multi ./src/map/map.model.js ***!
-  \************************************/
+/*!********************************************************!*\
+  !*** multi ./src/core/viewport ./src/map/map.model.js ***!
+  \********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+__webpack_require__(/*! ./src/core/viewport */"./src/core/viewport/index.js");
 module.exports = __webpack_require__(/*! ./src/map/map.model.js */"./src/map/map.model.js");
 
 

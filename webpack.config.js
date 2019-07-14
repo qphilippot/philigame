@@ -5,14 +5,15 @@ const CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin;
 module.exports = {
   mode: 'development',
   entry: [
-    './src/map/map.model.js'
+    './src/core/viewport',
+    './src/map/map.model.js',
   ],
 
   plugins: [
     // new CleanWebpackPlugin(['dist/*']) for < v2 versions of CleanWebpackPlugin
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
-      title: 'Development'
+      template: './assets/map.html'
     })
   ],
 
