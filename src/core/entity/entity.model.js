@@ -1,5 +1,6 @@
 const EventEmitter = require('events').EventEmitter;
 const configuration = require('./entity.model.config');
+const Notification = require('../notification');
 
 let counter = 0;
 
@@ -34,6 +35,49 @@ class Entity {
         this.listeners = [];
     }
 
+    
+
+    sendNotification(name, data) {
+        this.subscribers.forEach(subscriber => {
+            const notification = Notification.getOne(name, data);
+            subscriber.onNewNotification(notification)
+        });
+    }
+
+    subscribe(observable) {
+        observable.register(this);
+        // record all subscribed ?
+    }
+
+    register(subscriber) {
+        this.subscribers.add(subscriber);
+    }
+
+    onNewNotification(notification) {
+        const notificationName = notification.name;
+
+        // override me !
+
+        notification.recycle();
+    }
+
+    notify() {
+
+    }
+
+    createCustomEvent(eventName, data) {
+        if (typeof window.CustomEvent === "function") {
+            return new CustomEvent(eventName, data);
+        }
+        // IE polyfill
+        else {
+            const params = data || { bubbles: false, cancelable: false, detail: undefined };
+            const evt = document.createEvent( 'CustomEvent' );
+            evt.initCustomEvent( eventName, params.bubbles, params.cancelable, params.detail );
+            return evt;
+        }
+    }
+    
     
     init_id(settings) {
         this.entity_id = `entity_${++counter}`;
@@ -99,6 +143,9 @@ class Entity {
     }
 
     emit(eventName, data) {
+        const target = data.target || window;
+        const envent = this.createCustomEvent(eventName, data);
+        target.dispatchEvent(event);
         // this.event.emit(eventName, data);
     }
 
