@@ -546,6 +546,75 @@ function unwrapListeners(arr) {
 
 /***/ }),
 
+/***/ "./src/core/components/POOL.model.js":
+/*!*******************************************!*\
+  !*** ./src/core/components/POOL.model.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+class POOL {
+    constructor(settings) {
+        this.type = settings.type;
+        this.isInitialized = false;
+
+        const capacity = settings.capacity || 10;
+        this.data = new Array(capacity);
+        this.index = capacity -1;
+
+        this.initPool();
+    }
+
+    getCapacity() {
+        return this.data.length;
+    }
+
+    initPool() {
+        const capacity = this.getCapacity();
+        for(let i = 0; i < capacity; ++i) {
+            console.log(this.type);
+            this.data[i] = new (this.type)();
+        }
+    }
+
+    setCapacity(capacity) {
+        this.data.length = capacity;
+    }
+
+    beSureThatCapacityIsOkay() {
+        const capacity = this.getCapacity();
+        if ((1 + this.index) === capacity) {
+            this.setCapacity(capacity + 10);
+        }
+    }
+
+    recycle(instance) {
+        this.beSureThatCapacityIsOkay();
+
+        this.data[this.index] = instance;
+        this.index++;
+    }
+
+    getOne() {
+        let instance  = null;
+
+        if (this.index > 0) {
+            instance = this.data[this.index];
+            this.index--;
+        }
+
+        else {
+            instance = new (this.type)();
+        }
+
+        return instance;
+    }
+}
+
+module.exports = POOL;
+
+/***/ }),
+
 /***/ "./src/core/controllers/mouse.controller.js":
 /*!**************************************************!*\
   !*** ./src/core/controllers/mouse.controller.js ***!
@@ -654,6 +723,7 @@ module.exports = {
 
 const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js").EventEmitter;
 const configuration = __webpack_require__(/*! ./entity.model.config */ "./src/core/entity/entity.model.config.js");
+const Notification = __webpack_require__(/*! ../notification */ "./src/core/notification/index.js");
 
 let counter = 0;
 
@@ -669,6 +739,8 @@ class Entity {
         this.skills = {};
         this.data = {};
         this.ui = {};
+        this.subscribers = new Set();
+
         this.services = settings.services;
         this.strictMode = settings.strictMode;
         this.verboseMode = settings.verboseMode;
@@ -688,6 +760,45 @@ class Entity {
         this.listeners = [];
     }
 
+    
+
+    sendNotification(name, data) {
+        this.subscribers.forEach(subscriber => {
+            const notification = Notification.POOL.getOne(name, data);
+            subscriber.onNewNotification(notification)
+        });
+    }
+
+    subscribe(observable) {
+        observable.register(this);
+        // record all subscribed ?
+    }
+
+    register(subscriber) {
+        this.subscribers.add(subscriber);
+    }
+
+    onNewNotification(notification) {
+        const notificationName = notification.name;
+
+        // override me !
+
+        notification.recycle();
+    }
+
+    createCustomEvent(eventName, data) {
+        if (typeof window.CustomEvent === "function") {
+            return new CustomEvent(eventName, data);
+        }
+        // IE polyfill
+        else {
+            const params = data || { bubbles: false, cancelable: false, detail: undefined };
+            const evt = document.createEvent( 'CustomEvent' );
+            evt.initCustomEvent( eventName, params.bubbles, params.cancelable, params.detail );
+            return evt;
+        }
+    }
+    
     
     init_id(settings) {
         this.entity_id = `entity_${++counter}`;
@@ -753,6 +864,9 @@ class Entity {
     }
 
     emit(eventName, data) {
+        const target = data.target || window;
+        const envent = this.createCustomEvent(eventName, data);
+        target.dispatchEvent(event);
         // this.event.emit(eventName, data);
     }
 
@@ -841,6 +955,104 @@ class Entity {
 }
 
 module.exports = Entity;
+
+/***/ }),
+
+/***/ "./src/core/notification/index.js":
+/*!****************************************!*\
+  !*** ./src/core/notification/index.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Notification = __webpack_require__(/*! ./notification.model */ "./src/core/notification/notification.model.js");
+const POOL = __webpack_require__(/*! ./notification.POOL */ "./src/core/notification/notification.POOL.js");
+
+console.log('Notification.POOL', Notification.POOL)
+if (Notification.POOL === null) {
+    Notification.POOL = new POOL();
+    console.log('Notification.POOL', Notification.POOL)
+}
+
+module.exports = Notification;
+
+/***/ }),
+
+/***/ "./src/core/notification/notification.POOL.js":
+/*!****************************************************!*\
+  !*** ./src/core/notification/notification.POOL.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Notification = __webpack_require__(/*! ./notification.model */ "./src/core/notification/notification.model.js");
+const POOL = __webpack_require__(/*! ../components/POOL.model */ "./src/core/components/POOL.model.js");
+
+class NotificationPOOL extends POOL {
+    constructor(settings) {
+        console.log(Notification);
+        super({
+            type: Notification,
+            capacity: 10
+        });
+    }
+
+    getOne(name, data) {
+        const notification = super.getOne();
+        notification.setName(name);
+        notification.setData(data);
+
+        return notification;
+    }
+   
+}
+
+
+
+module.exports = NotificationPOOL;
+
+/***/ }),
+
+/***/ "./src/core/notification/notification.model.js":
+/*!*****************************************************!*\
+  !*** ./src/core/notification/notification.model.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+class Notification {
+    constructor(name, data) {
+        this.name = name || '';
+        this.data = data || {};
+    }
+
+    getName() {
+        return this.name;
+    }
+
+    getData() {
+        return this.getData;
+    }
+
+    setData(data) {
+        this.data = data;
+    }
+
+    setName(name) {
+        this.name = name;
+    }
+
+    recycle() {
+        Notification.POOL.recycle(this);
+    }
+}
+
+if (typeof Notification.POOL === 'undefined') {
+    console.log('POOL is undefined');
+    Notification.POOL = null;
+}
+
+module.exports = Notification;
 
 /***/ }),
 
@@ -1011,12 +1223,24 @@ class ViewPort extends Entity {
         return {x, y};
     }
 
+    bind(component) {
+        component.subscribe(this);
+    }
 
     getCellCoordsFromPixelCoords(coords) {
         const ratio = this.data.ratio;
         const x = Math.floor(coords.x * ratio.x);
         const y =  Math.floor(coords.y * ratio.y);
         console.log('getCellCoordsFromPixelCoords', x, y);
+
+        return {x, y};
+    }
+
+    getNormalizedPosition(coords) {
+        const x = (coords.x - this.ui.layout.offsetLeft + window.scrollX) / this.data.size.width;
+        const y = (coords.y - this.ui.layout.offsetTop + window.scrollY) / this.data.size.height;
+
+        console.log('getNormalizedPosition', x, y);
 
         return {x, y};
     }
@@ -1051,7 +1275,11 @@ class ViewPortMouseController extends MouseController {
 
     onMouseMove(event) {
         const pixelCoords = this.component.getPixelsCoordsFromPageCoords(event);
-        this.component.getCellCoordsFromPixelCoords(pixelCoords);
+        const cellCoords = this.component.getCellCoordsFromPixelCoords(pixelCoords);
+        const p = this.component.getNormalizedPosition(event);
+
+        console.log('send notification')
+        this.component.sendNotification('updateCoords', p);
     }
 }
 
@@ -1071,10 +1299,62 @@ class Map extends Entity {
     constructor(settings = {}) {
         super(settings);
 
+        this.context = {
+            topLeftPixelCoords: {
+                x: 0,
+                y:0
+            },
+
+            topRightPixelCoords: {
+                x: 0,
+                y:0
+            },
+
+            bottomLeftPixelCoords: {
+                x: 0,
+                y:0
+            },
+
+
+        }
+
         this.data.nbRows = settings.nbRows || 10;
         this.data.nbColumns = settings.nbColumns || 10;
 
         console.log('new map', settings);
+    }
+
+    getNbRows() {
+        return this.data.nbRows;
+    }
+
+    getNbColumns() {
+        return this.data.nbColumns;
+    }
+    viewPortCellCoordsToMapCellCoords(viewportCellCoords) {
+        const x = Math.floor(viewportCellCoords.x * this.getNbRows());
+        const y = Math.floor(viewportCellCoords.y * this.getNbColumns());
+
+        console.log(x, y, viewportCellCoords,  this.getNbRows(),  this.getNbColumns());
+    }
+    
+
+    onNewNotification(notification) {
+        const notificationName = notification.name;
+
+        switch(notificationName) {
+            case 'updateCoords':
+                console.log('updateCoords', notification.data);
+                this.viewPortCellCoordsToMapCellCoords(notification.data);
+                break;
+            default:
+                console.log(notification);
+                break;
+        } 
+
+        // override me !
+
+        notification.recycle();
     }
 }
 

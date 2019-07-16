@@ -16,6 +16,8 @@ class Entity {
         this.skills = {};
         this.data = {};
         this.ui = {};
+        this.subscribers = new Set();
+
         this.services = settings.services;
         this.strictMode = settings.strictMode;
         this.verboseMode = settings.verboseMode;
@@ -39,7 +41,7 @@ class Entity {
 
     sendNotification(name, data) {
         this.subscribers.forEach(subscriber => {
-            const notification = Notification.getOne(name, data);
+            const notification = Notification.POOL.getOne(name, data);
             subscriber.onNewNotification(notification)
         });
     }
@@ -59,10 +61,6 @@ class Entity {
         // override me !
 
         notification.recycle();
-    }
-
-    notify() {
-
     }
 
     createCustomEvent(eventName, data) {

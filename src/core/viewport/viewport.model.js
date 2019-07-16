@@ -147,12 +147,24 @@ class ViewPort extends Entity {
         return {x, y};
     }
 
+    bind(component) {
+        component.subscribe(this);
+    }
 
     getCellCoordsFromPixelCoords(coords) {
         const ratio = this.data.ratio;
         const x = Math.floor(coords.x * ratio.x);
         const y =  Math.floor(coords.y * ratio.y);
         console.log('getCellCoordsFromPixelCoords', x, y);
+
+        return {x, y};
+    }
+
+    getNormalizedPosition(coords) {
+        const x = (coords.x - this.ui.layout.offsetLeft + window.scrollX) / this.data.size.width;
+        const y = (coords.y - this.ui.layout.offsetTop + window.scrollY) / this.data.size.height;
+
+        console.log('getNormalizedPosition', x, y);
 
         return {x, y};
     }

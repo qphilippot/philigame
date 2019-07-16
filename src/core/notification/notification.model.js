@@ -1,5 +1,3 @@
-const POOL = require('./notification.POOL');
-
 class Notification {
     constructor(name, data) {
         this.name = name || '';
@@ -27,6 +25,9 @@ class Notification {
     }
 }
 
-Notification.POOL = new POOL();
+if (typeof Notification.POOL === 'undefined') {
+    console.log('POOL is undefined');
+    Notification.POOL = null;
+}
 
 module.exports = Notification;

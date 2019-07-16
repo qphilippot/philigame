@@ -1,6 +1,6 @@
 class POOL {
     constructor(settings) {
-        this.typeName = settings.type;
+        this.type = settings.type;
         this.isInitialized = false;
 
         const capacity = settings.capacity || 10;
@@ -17,6 +17,7 @@ class POOL {
     initPool() {
         const capacity = this.getCapacity();
         for(let i = 0; i < capacity; ++i) {
+            console.log(this.type);
             this.data[i] = new (this.type)();
         }
     }
@@ -35,7 +36,7 @@ class POOL {
     recycle(instance) {
         this.beSureThatCapacityIsOkay();
 
-        this.data.POOL[this.index] = instance;
+        this.data[this.index] = instance;
         this.index++;
     }
 
