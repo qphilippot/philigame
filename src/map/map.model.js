@@ -3,6 +3,9 @@ class Map extends Entity {
     constructor(settings = {}) {
         super(settings);
 
+        this.layers = {};
+
+
         this.context = {
             topLeftPixelCoords: {
                 x: 0,
@@ -24,8 +27,32 @@ class Map extends Entity {
 
         this.data.nbRows = settings.nbRows || 10;
         this.data.nbColumns = settings.nbColumns || 10;
+        this.data.nbLayers = 0;
+        this.data.layersAvailabes = [];
 
         console.log('new map', settings);
+    }
+
+    setLayer(layers = {}, index) {
+        this.layers[index] = layers;
+        this.data.nbLayers = Object.keys(this.layers).length;
+        this.data.layersAvailabes = Object.values(this.layers).sort();
+    }
+
+    add(gameElement, x, y, z) {
+        if (this.layers.length > z) {
+            this.layers[z][x][y] = gameElement;
+        }
+
+        else {
+            const layer = {};
+            layer[x] = {};
+            layer[x][y] = gameElement;
+            this.setLayer(layer, z);
+        }
+    }
+
+    render() {
     }
 
     getNbRows() {
@@ -60,14 +87,6 @@ class Map extends Entity {
 
         notification.recycle();
     }
-}
-
-if (typeof window !== 'undefined') {
-    if (typeof window.Map === 'undefined') {
-        window.Map = {};
-    } 
-
-    window.GameDong.Map = Map;
 }
 
 module.exports = Map;

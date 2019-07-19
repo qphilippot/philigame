@@ -81,10 +81,21 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/app/index.js");
 /******/ })
 /************************************************************************/
 /******/ ({
+
+/***/ "./assets/tiles/tile.png":
+/*!*******************************!*\
+  !*** ./assets/tiles/tile.png ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "0dde22c4f7ae0f112541782fcacd5af3.png";
+
+/***/ }),
 
 /***/ "./node_modules/events/events.js":
 /*!***************************************!*\
@@ -546,6 +557,138 @@ function unwrapListeners(arr) {
 
 /***/ }),
 
+/***/ "./src/app/assets.loader.js":
+/*!**********************************!*\
+  !*** ./src/app/assets.loader.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = (GameDong) => {
+    const AssetManager = GameDong.AssetManager;
+
+    console.log('asset manager', AssetManager);
+    AssetManager.store('tile', __webpack_require__(/*! @assets/tiles/tile.png */ "./assets/tiles/tile.png"));
+};
+
+/***/ }),
+
+/***/ "./src/app/class.loader.js":
+/*!*********************************!*\
+  !*** ./src/app/class.loader.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = (app) => {
+    app.AssetManager = __webpack_require__(/*! @core/assets */ "./src/core/assets/index.js");
+    app.Map = __webpack_require__(/*! ../map */ "./src/map/index.js");
+    app.ViewPort = __webpack_require__(/*! @core/viewport */ "./src/core/viewport/index.js");
+    app.GameElement = __webpack_require__(/*! @core/game-element */ "./src/core/game-element/index.js");
+};
+
+
+/***/ }),
+
+/***/ "./src/app/index.js":
+/*!**************************!*\
+  !*** ./src/app/index.js ***!
+  \**************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! ./main */ "./src/app/main.js");
+
+/***/ }),
+
+/***/ "./src/app/main.js":
+/*!*************************!*\
+  !*** ./src/app/main.js ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+console.log('main hello');
+
+const app = {};
+
+try {
+
+    __webpack_require__(/*! ./class.loader */ "./src/app/class.loader.js")(app);
+    __webpack_require__(/*! ./assets.loader */ "./src/app/assets.loader.js")(app);
+    
+}
+
+catch(error) {
+    console.error(error);
+}
+
+finally {
+    console.log('app', app)
+    window.GameDong = app;
+    
+    
+    console.log('GameDong', app)
+}
+
+module.exports  = app;
+
+/***/ }),
+
+/***/ "./src/core/assets/asset.service.js":
+/*!******************************************!*\
+  !*** ./src/core/assets/asset.service.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// const Asset = require('./asset.model')
+
+class AssetManager {
+    constructor() {
+        this.ressources = {};
+    }
+
+    store(name, data) {
+        console.log('store', name, data);
+        this.ressources[name] = data;
+    }
+
+    get(name) {
+        return this.ressources[name];
+    }
+
+    delete(name) {
+        delete this.ressources[name];
+    }
+}
+
+AssetManager.singleton = null;
+AssetManager.getInstance = function() {
+    if (AssetManager.singleton === null) {
+        AssetManager.singleton = new AssetManager();
+    }
+
+    return AssetManager.singleton;
+}
+
+module.exports = AssetManager;
+
+
+
+/***/ }),
+
+/***/ "./src/core/assets/index.js":
+/*!**********************************!*\
+  !*** ./src/core/assets/index.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! ./asset.service */ "./src/core/assets/asset.service.js").getInstance();
+
+/***/ }),
+
 /***/ "./src/core/components/POOL.model.js":
 /*!*******************************************!*\
   !*** ./src/core/components/POOL.model.js ***!
@@ -769,6 +912,10 @@ class Entity {
         });
     }
 
+    getData(propertyName) {
+        return this.data[propertyName];
+    }
+
     subscribe(observable) {
         observable.register(this);
         // record all subscribed ?
@@ -958,6 +1105,69 @@ module.exports = Entity;
 
 /***/ }),
 
+/***/ "./src/core/entity/index.js":
+/*!**********************************!*\
+  !*** ./src/core/entity/index.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! ./entity.model */ "./src/core/entity/entity.model.js");
+
+/***/ }),
+
+/***/ "./src/core/game-element/game-element.model.js":
+/*!*****************************************************!*\
+  !*** ./src/core/game-element/game-element.model.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Entity = __webpack_require__(/*! @core/entity */ "./src/core/entity/index.js");
+
+class GameElement extends Entity {
+    constructor(settings = {}) {
+        super(settings);
+
+        this.setTexture(settings.texture);
+        this.setPosition(settings.position)
+    }
+
+
+    setPosition(position = {x: 0, y:0}) {
+        this.data.position = position;
+    }
+
+    setTexture(texture = null) {
+        console.log('setTexture', texture);
+        
+        this.data.texture = texture;
+    }
+
+    render(context = null, x, y, w, h) {
+        const d = this.data;
+        const p = d.position;
+
+        // context.drawImage(d.texture, p.x, p.y);
+        context.drawImage(d.texture, x, y, w, h);
+    }
+}
+
+module.exports = GameElement;
+
+/***/ }),
+
+/***/ "./src/core/game-element/index.js":
+/*!****************************************!*\
+  !*** ./src/core/game-element/index.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! ./game-element.model */ "./src/core/game-element/game-element.model.js");
+
+/***/ }),
+
 /***/ "./src/core/notification/index.js":
 /*!****************************************!*\
   !*** ./src/core/notification/index.js ***!
@@ -1085,6 +1295,10 @@ class ViewPort extends Entity {
         this.initViewPort(settings);
     }
 
+    getContext() {
+        return this.ui.layout.context;
+    }
+
     initControllers() {
         this.controllers = {};
 
@@ -1113,6 +1327,7 @@ class ViewPort extends Entity {
     initViewPort(settings) {
         const layout = this.ui.layout; 
         layout.classList.add('gd-viewport');
+        layout.context = layout.getContext('2d');
 
         this.data.size = {
             width: 0,
@@ -1246,15 +1461,6 @@ class ViewPort extends Entity {
     }
 }
 
-
-if (typeof window !== 'undefined') {
-    if (typeof window.GameDong === 'undefined') {
-        window.GameDong = {};
-    } 
-
-    window.GameDong.ViewPort = ViewPort;
-}
-
 module.exports = ViewPort;
 
 /***/ }),
@@ -1287,6 +1493,17 @@ module.exports = ViewPortMouseController;
 
 /***/ }),
 
+/***/ "./src/map/index.js":
+/*!**************************!*\
+  !*** ./src/map/index.js ***!
+  \**************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! ./map.model */ "./src/map/map.model.js");
+
+/***/ }),
+
 /***/ "./src/map/map.model.js":
 /*!******************************!*\
   !*** ./src/map/map.model.js ***!
@@ -1298,6 +1515,9 @@ const Entity = __webpack_require__(/*! ../core/entity/entity.model */ "./src/cor
 class Map extends Entity {
     constructor(settings = {}) {
         super(settings);
+
+        this.layers = {};
+
 
         this.context = {
             topLeftPixelCoords: {
@@ -1320,8 +1540,32 @@ class Map extends Entity {
 
         this.data.nbRows = settings.nbRows || 10;
         this.data.nbColumns = settings.nbColumns || 10;
+        this.data.nbLayers = 0;
+        this.data.layersAvailabes = [];
 
         console.log('new map', settings);
+    }
+
+    setLayer(layers = {}, index) {
+        this.layers[index] = layers;
+        this.data.nbLayers = Object.keys(this.layers).length;
+        this.data.layersAvailabes = Object.values(this.layers).sort();
+    }
+
+    add(gameElement, x, y, z) {
+        if (this.layers.length > z) {
+            this.layers[z][x][y] = gameElement;
+        }
+
+        else {
+            const layer = {};
+            layer[x] = {};
+            layer[x][y] = gameElement;
+            this.setLayer(layer, z);
+        }
+    }
+
+    render() {
     }
 
     getNbRows() {
@@ -1358,28 +1602,7 @@ class Map extends Entity {
     }
 }
 
-if (typeof window !== 'undefined') {
-    if (typeof window.Map === 'undefined') {
-        window.Map = {};
-    } 
-
-    window.GameDong.Map = Map;
-}
-
 module.exports = Map;
-
-/***/ }),
-
-/***/ 0:
-/*!********************************************************!*\
-  !*** multi ./src/core/viewport ./src/map/map.model.js ***!
-  \********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(/*! ./src/core/viewport */"./src/core/viewport/index.js");
-module.exports = __webpack_require__(/*! ./src/map/map.model.js */"./src/map/map.model.js");
-
 
 /***/ })
 

@@ -9,6 +9,10 @@ class ViewPort extends Entity {
         this.initViewPort(settings);
     }
 
+    getContext() {
+        return this.ui.layout.context;
+    }
+
     initControllers() {
         this.controllers = {};
 
@@ -37,6 +41,7 @@ class ViewPort extends Entity {
     initViewPort(settings) {
         const layout = this.ui.layout; 
         layout.classList.add('gd-viewport');
+        layout.context = layout.getContext('2d');
 
         this.data.size = {
             width: 0,
@@ -168,15 +173,6 @@ class ViewPort extends Entity {
 
         return {x, y};
     }
-}
-
-
-if (typeof window !== 'undefined') {
-    if (typeof window.GameDong === 'undefined') {
-        window.GameDong = {};
-    } 
-
-    window.GameDong.ViewPort = ViewPort;
 }
 
 module.exports = ViewPort;

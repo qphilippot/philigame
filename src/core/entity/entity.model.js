@@ -46,6 +46,10 @@ class Entity {
         });
     }
 
+    getData(propertyName) {
+        return this.data[propertyName];
+    }
+
     subscribe(observable) {
         observable.register(this);
         // record all subscribed ?
