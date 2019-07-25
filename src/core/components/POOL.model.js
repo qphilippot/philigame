@@ -52,6 +52,7 @@ class POOL {
             instance = new (this.type)();
         }
 
+        instance.core.pool = this;
         return instance;
     }
 }

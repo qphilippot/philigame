@@ -583,6 +583,7 @@ module.exports = (GameDong) => {
 module.exports = (app) => {
     app.AssetManager = __webpack_require__(/*! @core/assets */ "./src/core/assets/index.js");
     app.Map = __webpack_require__(/*! ../map */ "./src/map/index.js");
+    app.Coords = __webpack_require__(/*! @core/coords */ "./src/core/coords/index.js");
     app.ViewPort = __webpack_require__(/*! @core/viewport */ "./src/core/viewport/index.js");
     app.GameElement = __webpack_require__(/*! @core/game-element */ "./src/core/game-element/index.js");
 };
@@ -750,6 +751,7 @@ class POOL {
             instance = new (this.type)();
         }
 
+        instance.core.pool = this;
         return instance;
     }
 }
@@ -834,6 +836,136 @@ class MouseController extends Entity {
 MouseController.LEFT_CLICK = 1;
 MouseController.RIGHT_CLICK = 2;
 module.exports = MouseController;
+
+/***/ }),
+
+/***/ "./src/core/coords/coords.model.js":
+/*!*****************************************!*\
+  !*** ./src/core/coords/coords.model.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+class Coords {
+    constructor(pool) {
+        this.core = {
+            pool: pool || null
+        }
+    }
+
+    set(coords) {
+        const max = Math.min(this.data.length, coords.data.length);
+
+        for(let i = 0; i < max; ++i) {
+            this.data[i] = coords.data[0];
+        }
+    }
+
+    get() {
+        return this.data;
+    }
+
+    recycle() {
+        if (this.core.pool !== null) {
+            this.core.pool.recycle(this);
+        }
+    }
+}
+
+module.exports = Coords;
+
+/***/ }),
+
+/***/ "./src/core/coords/coords2D.model.js":
+/*!*******************************************!*\
+  !*** ./src/core/coords/coords2D.model.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Coords = __webpack_require__(/*! ./coords.model */ "./src/core/coords/coords.model.js");
+
+class Coords2D extends Coords {
+    constructor(x = 0, y = 0, pool = null) {
+        super(pool);
+        this.data = [x, y];
+    }
+
+    getX() {
+        return this.data[0];
+    }
+
+    getY() {
+        return this.data[1];
+    }
+
+    setX(x) {
+        this.data[0] = x;
+    }
+
+    setY(y) {
+        this.data[1] = y;
+    }
+
+}
+
+module.exports = Coords2D;
+
+/***/ }),
+
+/***/ "./src/core/coords/coords3D.model.js":
+/*!*******************************************!*\
+  !*** ./src/core/coords/coords3D.model.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Coords2D = __webpack_require__(/*! ./coords2D.model */ "./src/core/coords/coords2D.model.js");
+
+class Coords3D extends Coords2D {
+    constructor(x = 0, y = 0, z = 0, pool = null) {
+        super(x, y, pool)
+        this.data.length = 3;
+        this.data[2] = z;
+    }
+
+    getZ() {
+        return this.data[2];
+    }
+
+    setZ(z) {
+        this.data[2] = z;
+    }
+}
+
+
+module.exports = Coords3D;
+
+/***/ }),
+
+/***/ "./src/core/coords/index.js":
+/*!**********************************!*\
+  !*** ./src/core/coords/index.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Coords2D = __webpack_require__(/*! ./coords2D.model */ "./src/core/coords/coords2D.model.js");
+const Coords3D = __webpack_require__(/*! ./coords3D.model */ "./src/core/coords/coords3D.model.js");
+
+const POOL = __webpack_require__(/*! ../components/POOL.model */ "./src/core/components/POOL.model.js");
+
+
+module.exports = {
+    _2D: new POOL({
+        type: Coords2D,
+        capacity: 20
+    }),
+    
+    _3D: new POOL({
+        type: Coords3D
+    })
+};
 
 /***/ }),
 
