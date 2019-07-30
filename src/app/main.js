@@ -1,12 +1,9 @@
 console.log('main hello');
-
 const app = {};
 
 try {
-
     require('./class.loader')(app);
     require('./assets.loader')(app);
-    
 }
 
 catch(error) {
@@ -16,8 +13,6 @@ catch(error) {
 finally {
     console.log('app', app)
     window.GameDong = app;
-    
-    
     console.log('GameDong', app)
 }
 

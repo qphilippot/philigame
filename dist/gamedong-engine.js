@@ -610,14 +610,11 @@ module.exports = __webpack_require__(/*! ./main */ "./src/app/main.js");
 /***/ (function(module, exports, __webpack_require__) {
 
 console.log('main hello');
-
 const app = {};
 
 try {
-
     __webpack_require__(/*! ./class.loader */ "./src/app/class.loader.js")(app);
     __webpack_require__(/*! ./assets.loader */ "./src/app/assets.loader.js")(app);
-    
 }
 
 catch(error) {
@@ -627,8 +624,6 @@ catch(error) {
 finally {
     console.log('app', app)
     window.GameDong = app;
-    
-    
     console.log('GameDong', app)
 }
 
@@ -1011,10 +1006,10 @@ class Entity {
 
         this.initialize_skills(settings);
 
-        this.skills = {};
-        this.data = {};
-        this.ui = {};
-        this.subscribers = new Set();
+        this.skills       = {};
+        this.data         = {};
+        this.ui           = {};
+        this.subscribers  = new Set();
 
         this.services = settings.services;
         this.strictMode = settings.strictMode;
@@ -1270,6 +1265,10 @@ class GameElement extends Entity {
         this.data.position = position;
     }
 
+    setSize(size = {width: 0, height:0}) {
+        this.data.size = size;
+    }
+
     setTexture(texture = null) {
         console.log('setTexture', texture);
         
@@ -1279,9 +1278,10 @@ class GameElement extends Entity {
     render(context = null, x, y, w, h) {
         const d = this.data;
         const p = d.position;
+        const s = d.size;
 
-        // context.drawImage(d.texture, p.x, p.y);
-        context.drawImage(d.texture, x, y, w, h);
+        context.drawImage(d.texture, p.x, p.y, s.width, s.height);
+        // context.drawImage(d.texture, x, y, w, h);
     }
 }
 
@@ -1373,7 +1373,7 @@ class Notification {
     }
 
     getData() {
-        return this.getData;
+        return this.data;
     }
 
     setData(data) {
@@ -1575,9 +1575,9 @@ class ViewPort extends Entity {
     }
 
     getCellCoordsFromPixelCoords(coords) {
-        const ratio = this.data.ratio;
-        const x = Math.floor(coords.x * ratio.x);
-        const y =  Math.floor(coords.y * ratio.y);
+        const ratio  = this.data.ratio;
+        const x      = Math.floor(coords.x * ratio.x);
+        const y      = Math.floor(coords.y * ratio.y);
         console.log('getCellCoordsFromPixelCoords', x, y);
 
         return {x, y};
@@ -1670,10 +1670,10 @@ class Map extends Entity {
 
         }
 
-        this.data.nbRows = settings.nbRows || 10;
-        this.data.nbColumns = settings.nbColumns || 10;
-        this.data.nbLayers = 0;
-        this.data.layersAvailabes = [];
+        this.data.nbRows           = settings.nbRows || 10;
+        this.data.nbColumns        = settings.nbColumns || 10;
+        this.data.nbLayers         = 0;
+        this.data.layersAvailabes  = [];
 
         console.log('new map', settings);
     }
@@ -1697,7 +1697,37 @@ class Map extends Entity {
         }
     }
 
-    render() {
+    render(x_min, y_min, z_min, x_max, y_max, z_max, context) {
+        let layer, row = null;
+        for(let z = z_min; z < z_max; ++z) {
+            if (typeof this.layers[z] === 'undefined') {
+                continue;
+            }
+
+            else {
+                layer = this.layers[z];
+            }
+
+            for(let y = y_min; y < y_max; ++y) {
+                if (typeof layers[y] === 'undefined') {
+                    continue;
+                }
+    
+                else {
+                    row = layers[y];
+                }
+
+                for(let x = x_min; x < x_max; ++x) {
+                    if (typeof row[x] === "undefined") {
+                        continue
+                    }
+
+                    else {
+                        row[x].render(context, )
+                    }
+                }
+            }
+        }
     }
 
     getNbRows() {

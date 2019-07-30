@@ -13,10 +13,10 @@ class Entity {
 
         this.initialize_skills(settings);
 
-        this.skills = {};
-        this.data = {};
-        this.ui = {};
-        this.subscribers = new Set();
+        this.skills       = {};
+        this.data         = {};
+        this.ui           = {};
+        this.subscribers  = new Set();
 
         this.services = settings.services;
         this.strictMode = settings.strictMode;

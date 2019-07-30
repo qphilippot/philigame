@@ -34,9 +34,18 @@
 
               document.getElementById('test-id').src = GameDong.AssetManager.get('tile');
               page.gameElt.setTexture(window.tile);
-              page.gameElt.render(page.viewport.getContext(), 0, 0, 10, 10);
-              page.viewport.register(page.map, 0, 0, 20, 20);
-              page.coords2D = GameDong.coords._2D.getOne();
+              page.gameElt.setPosition({ x: 0, y: 0 });
+              page.gameElt.setSize({ width: 10, height: 10 });
+              page.gameElt.render(page.viewport.getContext());
+              
+              //page.viewport.register(page.map, 0, 0, 20, 20);
+              
+
+              page.gameElt.setPosition({ x: 20, y: 20 });
+              page.gameElt.render(page.viewport.getContext());
+              
+
+              page.coords2D = GameDong.Coords._2D.getOne();
             }
         });
     </script>

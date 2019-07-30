@@ -9,7 +9,7 @@ class Notification {
     }
 
     getData() {
-        return this.getData;
+        return this.data;
     }
 
     setData(data) {

@@ -13,6 +13,10 @@ class GameElement extends Entity {
         this.data.position = position;
     }
 
+    setSize(size = {width: 0, height:0}) {
+        this.data.size = size;
+    }
+
     setTexture(texture = null) {
         console.log('setTexture', texture);
         
@@ -22,9 +26,10 @@ class GameElement extends Entity {
     render(context = null, x, y, w, h) {
         const d = this.data;
         const p = d.position;
+        const s = d.size;
 
-        // context.drawImage(d.texture, p.x, p.y);
-        context.drawImage(d.texture, x, y, w, h);
+        context.drawImage(d.texture, p.x, p.y, s.width, s.height);
+        // context.drawImage(d.texture, x, y, w, h);
     }
 }
 

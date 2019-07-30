@@ -25,10 +25,10 @@ class Map extends Entity {
 
         }
 
-        this.data.nbRows = settings.nbRows || 10;
-        this.data.nbColumns = settings.nbColumns || 10;
-        this.data.nbLayers = 0;
-        this.data.layersAvailabes = [];
+        this.data.nbRows           = settings.nbRows || 10;
+        this.data.nbColumns        = settings.nbColumns || 10;
+        this.data.nbLayers         = 0;
+        this.data.layersAvailabes  = [];
 
         console.log('new map', settings);
     }
@@ -52,7 +52,37 @@ class Map extends Entity {
         }
     }
 
-    render() {
+    render(x_min, y_min, z_min, x_max, y_max, z_max, context) {
+        let layer, row = null;
+        for(let z = z_min; z < z_max; ++z) {
+            if (typeof this.layers[z] === 'undefined') {
+                continue;
+            }
+
+            else {
+                layer = this.layers[z];
+            }
+
+            for(let y = y_min; y < y_max; ++y) {
+                if (typeof layers[y] === 'undefined') {
+                    continue;
+                }
+    
+                else {
+                    row = layers[y];
+                }
+
+                for(let x = x_min; x < x_max; ++x) {
+                    if (typeof row[x] === "undefined") {
+                        continue
+                    }
+
+                    else {
+                        row[x].render(context, )
+                    }
+                }
+            }
+        }
     }
 
     getNbRows() {

@@ -157,9 +157,9 @@ class ViewPort extends Entity {
     }
 
     getCellCoordsFromPixelCoords(coords) {
-        const ratio = this.data.ratio;
-        const x = Math.floor(coords.x * ratio.x);
-        const y =  Math.floor(coords.y * ratio.y);
+        const ratio  = this.data.ratio;
+        const x      = Math.floor(coords.x * ratio.x);
+        const y      = Math.floor(coords.y * ratio.y);
         console.log('getCellCoordsFromPixelCoords', x, y);
 
         return {x, y};
