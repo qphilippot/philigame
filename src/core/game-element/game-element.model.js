@@ -8,6 +8,21 @@ class GameElement extends Entity {
         this.setPosition(settings.position)
     }
 
+    getX() {
+        return this.data.position.x;
+    }
+
+    getY() {
+        return this.data.position.y;
+    }
+
+    getWidth() {
+        return this.data.size.width;
+    }
+
+    getHeight() {
+        return this.data.size.height;
+    }
 
     setPosition(position = {x: 0, y:0}) {
         this.data.position = position;
@@ -28,7 +43,9 @@ class GameElement extends Entity {
         const p = d.position;
         const s = d.size;
 
-        context.drawImage(d.texture, p.x, p.y, s.width, s.height);
+console.log('params', x, y, w, h);
+        console.log('render', d.texture, x || p.x, y || p.y, w || s.width, h || s.height)
+        context.drawImage(d.texture, x || p.x, y || p.y, w || s.width, h || s.height);
         // context.drawImage(d.texture, x, y, w, h);
     }
 }

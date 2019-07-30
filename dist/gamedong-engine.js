@@ -583,6 +583,7 @@ module.exports = (GameDong) => {
 module.exports = (app) => {
     app.AssetManager = __webpack_require__(/*! @core/assets */ "./src/core/assets/index.js");
     app.Map = __webpack_require__(/*! ../map */ "./src/map/index.js");
+    app.TileMap = __webpack_require__(/*! ../map/tile-map.model */ "./src/map/tile-map.model.js");
     app.Coords = __webpack_require__(/*! @core/coords */ "./src/core/coords/index.js");
     app.ViewPort = __webpack_require__(/*! @core/viewport */ "./src/core/viewport/index.js");
     app.GameElement = __webpack_require__(/*! @core/game-element */ "./src/core/game-element/index.js");
@@ -1260,6 +1261,21 @@ class GameElement extends Entity {
         this.setPosition(settings.position)
     }
 
+    getX() {
+        return this.data.position.x;
+    }
+
+    getY() {
+        return this.data.position.y;
+    }
+
+    getWidth() {
+        return this.data.size.width;
+    }
+
+    getHeight() {
+        return this.data.size.height;
+    }
 
     setPosition(position = {x: 0, y:0}) {
         this.data.position = position;
@@ -1280,7 +1296,9 @@ class GameElement extends Entity {
         const p = d.position;
         const s = d.size;
 
-        context.drawImage(d.texture, p.x, p.y, s.width, s.height);
+console.log('params', x, y, w, h);
+        console.log('render', d.texture, x || p.x, y || p.y, w || s.width, h || s.height)
+        context.drawImage(d.texture, x || p.x, y || p.y, w || s.width, h || s.height);
         // context.drawImage(d.texture, x, y, w, h);
     }
 }
@@ -1632,6 +1650,9 @@ module.exports = ViewPortMouseController;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+const Map = __webpack_require__(/*! ./map.model */ "./src/map/map.model.js");
+const TileMap = __webpack_require__(/*! ./tile-map.model */ "./src/map/tile-map.model.js");
+
 module.exports = __webpack_require__(/*! ./map.model */ "./src/map/map.model.js");
 
 /***/ }),
@@ -1678,6 +1699,10 @@ class Map extends Entity {
         console.log('new map', settings);
     }
 
+    getLayer(z) {
+        return this.layers[z] || null;
+    }
+
     setLayer(layers = {}, index) {
         this.layers[index] = layers;
         this.data.nbLayers = Object.keys(this.layers).length;
@@ -1685,6 +1710,7 @@ class Map extends Entity {
     }
 
     add(gameElement, x, y, z) {
+        console.log('map add', gameElement)
         if (this.layers.length > z) {
             this.layers[z][x][y] = gameElement;
         }
@@ -1737,6 +1763,7 @@ class Map extends Entity {
     getNbColumns() {
         return this.data.nbColumns;
     }
+
     viewPortCellCoordsToMapCellCoords(viewportCellCoords) {
         const x = Math.floor(viewportCellCoords.x * this.getNbRows());
         const y = Math.floor(viewportCellCoords.y * this.getNbColumns());
@@ -1765,6 +1792,105 @@ class Map extends Entity {
 }
 
 module.exports = Map;
+
+/***/ }),
+
+/***/ "./src/map/tile-map.model.js":
+/*!***********************************!*\
+  !*** ./src/map/tile-map.model.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Map = __webpack_require__(/*! ./map.model */ "./src/map/map.model.js");
+class TileMap extends Map {
+    constructor(settings = {}) {
+        settings.name = settings.name || 'tile-map';
+        super(settings);
+    }
+
+    add(tile, x = 0, y = 0, z = 0, width = 1, height = 1) {
+        console.log('tile add');
+        tile.setPosition({x, y});
+        tile.setSize({width, height});
+
+        console.log('tile', tile)
+        super.add(tile, x, y, z);
+    }
+
+    getRenderingData(x_min = 0, y_min = 0, z_min = 0, x_max = this.getNbColumns(), y_max = this.getNbRows(), z_max = 10) {
+        let layer, row = null;
+
+        console.table({z_min, z_max, y_min, y_max});
+        let renderingData = [];
+        let x, y, z;
+
+
+       
+        for(z = z_min; z < z_max; z++) {
+            console.log('i try z=', z)
+            layer = this.getLayer(z);
+            if (layer !== null) {
+                for(y = y_min; y < y_max; y++) {
+                    if (typeof layer[y] !== 'undefined') {
+                        row = layer[y];
+                        for(x = x_min; x < x_max; x++) {
+                            if (typeof row[x] !== "undefined") {
+                                const elt = row[x];
+                                console.log('elt');
+                                console.table(elt.data);
+                                renderingData.push({
+                                    gameElement: elt,
+                                    x: elt.getX() / this.getNbColumns(),
+                                    y: elt.getY() / this.getNbRows(),
+                                    width: elt.getWidth() / this.getNbColumns(),
+                                    height: elt.getHeight() / this.getNbRows()
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return renderingData;
+    }
+
+    getNbRows() {
+        return this.data.nbRows;
+    }
+
+    getNbColumns() {
+        return this.data.nbColumns;
+    }
+    viewPortCellCoordsToMapCellCoords(viewportCellCoords) {
+        const x = Math.floor(viewportCellCoords.x * this.getNbRows());
+        const y = Math.floor(viewportCellCoords.y * this.getNbColumns());
+
+        console.log(x, y, viewportCellCoords,  this.getNbRows(),  this.getNbColumns());
+    }
+    
+
+    onNewNotification(notification) {
+        const notificationName = notification.name;
+
+        switch(notificationName) {
+            case 'updateCoords':
+                console.log('updateCoords', notification.data);
+                this.viewPortCellCoordsToMapCellCoords(notification.data);
+                break;
+            default:
+                console.log(notification);
+                break;
+        } 
+
+        // override me !
+
+        notification.recycle();
+    }
+}
+
+module.exports = TileMap;
 
 /***/ })
 

@@ -33,6 +33,10 @@ class Map extends Entity {
         console.log('new map', settings);
     }
 
+    getLayer(z) {
+        return this.layers[z] || null;
+    }
+
     setLayer(layers = {}, index) {
         this.layers[index] = layers;
         this.data.nbLayers = Object.keys(this.layers).length;
@@ -40,6 +44,7 @@ class Map extends Entity {
     }
 
     add(gameElement, x, y, z) {
+        console.log('map add', gameElement)
         if (this.layers.length > z) {
             this.layers[z][x][y] = gameElement;
         }
@@ -92,6 +97,7 @@ class Map extends Entity {
     getNbColumns() {
         return this.data.nbColumns;
     }
+
     viewPortCellCoordsToMapCellCoords(viewportCellCoords) {
         const x = Math.floor(viewportCellCoords.x * this.getNbRows());
         const y = Math.floor(viewportCellCoords.y * this.getNbColumns());
