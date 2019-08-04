@@ -29,27 +29,15 @@
 
 
 
-          // Retrieve image directly as game element using Asse
-            GameDong.AssetManager.getImage('tile').then(
-              image => {
-                const x_max = page.map.getNbColumns();           
-                const y_max = page.map.getNbRows();
-                // create game element from as
+          // Retrieve image directly as game element using AssetManager
+          Promise.all([
+            GameDong.AssetManager.getImageAsGameElement('tile'),
+            GameDong.AssetManager.getImageAsGameElement('a')
+          ]).then(gameElements => {
+            gameElements.forEach((gameElement, index) => {
+              page.map.add(gameElement, index);
+            });
 
-                let elt = null;
-                
-                
-                for (let x = 0; x < x_max; x++) {
-                  for (let y = 0; y < y_max; y++) {
-                    elt = new GameDong.GameElement();
-                    elt.name = image.name;
-                    elt.setTexture(image);
-
-                    page.map.add(elt, x, y, 0);
-                  }  
-                }
-
-                
             const vp = page.viewport;
             const resolution = vp.getResolution();
             console.log('resolution', resolution);
@@ -69,5 +57,5 @@
         });
     </script>
 
-  <script type="text/javascript" src="gamedong-engine.js"></script></body>
+  </body>
 </html>

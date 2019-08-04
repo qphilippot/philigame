@@ -649,9 +649,10 @@ module.exports  = app;
   !*** ./src/core/assets/asset.service.js ***!
   \******************************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 // const Asset = require('./asset.model')
+const GameElement = __webpack_require__(/*! @core/game-element */ "./src/core/game-element/index.js");
 
 class AssetManager {
     constructor() {
@@ -676,6 +677,17 @@ class AssetManager {
         });
     }
 
+    getImageAsGameElement(imageName) {
+        return new Promise(resolve => {
+            this.getImage(imageName).then(image => {
+                const elt = new GameElement();
+                elt.name = image.name;
+                elt.setTexture(image);
+
+                resolve(elt);
+            });
+        });
+    }
     delete(name) {
         delete this.ressources[name];
     }
@@ -1843,6 +1855,13 @@ class TileMap extends Map {
         console.log('add tile', tile, x, y)
         super.add(tile, x, y, z);
     }
+
+    // map date is an object like
+    // { layer: { x : { y : gameElement }}}
+    fill(mapData) {
+
+    }
+
 
     getRenderingData(x_min = 0, y_min = 0, z_min = 0, x_max = this.getNbColumns(), y_max = this.getNbRows(), z_max = 10) {
         let layer, row = null;

@@ -13,6 +13,13 @@ class TileMap extends Map {
         super.add(tile, x, y, z);
     }
 
+    // map date is an object like
+    // { layer: { x : { y : gameElement }}}
+    fill(mapData) {
+
+    }
+
+
     getRenderingData(x_min = 0, y_min = 0, z_min = 0, x_max = this.getNbColumns(), y_max = this.getNbRows(), z_max = 10) {
         let layer, row = null;
         let renderingData = [];
