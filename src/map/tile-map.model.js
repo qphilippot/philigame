@@ -6,25 +6,21 @@ class TileMap extends Map {
     }
 
     add(tile, x = 0, y = 0, z = 0, width = 1, height = 1) {
-        console.log('tile add');
         tile.setPosition({x, y});
         tile.setSize({width, height});
 
-        console.log('tile', tile)
+        console.log('add tile', tile, x, y)
         super.add(tile, x, y, z);
     }
 
     getRenderingData(x_min = 0, y_min = 0, z_min = 0, x_max = this.getNbColumns(), y_max = this.getNbRows(), z_max = 10) {
         let layer, row = null;
-
-        console.table({z_min, z_max, y_min, y_max});
         let renderingData = [];
         let x, y, z;
 
 
        
         for(z = z_min; z < z_max; z++) {
-            console.log('i try z=', z)
             layer = this.getLayer(z);
             if (layer !== null) {
                 for(y = y_min; y < y_max; y++) {
@@ -33,8 +29,6 @@ class TileMap extends Map {
                         for(x = x_min; x < x_max; x++) {
                             if (typeof row[x] !== "undefined") {
                                 const elt = row[x];
-                                console.log('elt');
-                                console.table(elt.data);
                                 renderingData.push({
                                     gameElement: elt,
                                     x: elt.getX() / this.getNbColumns(),
@@ -49,6 +43,7 @@ class TileMap extends Map {
             }
         }
 
+        console.log('found for rendering theses data', renderingData);
         return renderingData;
     }
 

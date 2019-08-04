@@ -86,6 +86,17 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./assets/tiles/a.png":
+/*!****************************!*\
+  !*** ./assets/tiles/a.png ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "059f67d1ccb259a78d52cfa4f77f0ce9.png";
+
+/***/ }),
+
 /***/ "./assets/tiles/tile.png":
 /*!*******************************!*\
   !*** ./assets/tiles/tile.png ***!
@@ -569,6 +580,7 @@ module.exports = (GameDong) => {
 
     console.log('asset manager', AssetManager);
     AssetManager.store('tile', __webpack_require__(/*! @assets/tiles/tile.png */ "./assets/tiles/tile.png"));
+    AssetManager.store('a', __webpack_require__(/*! @assets/tiles/a.png */ "./assets/tiles/a.png"));
 };
 
 /***/ }),
@@ -653,6 +665,15 @@ class AssetManager {
 
     get(name) {
         return this.ressources[name];
+    }
+
+    getImage(imageName) {
+        return new Promise(resolve => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.src = this.get(imageName);
+            img.name = imageName;
+        });
     }
 
     delete(name) {
@@ -1695,8 +1716,6 @@ class Map extends Entity {
         this.data.nbColumns        = settings.nbColumns || 10;
         this.data.nbLayers         = 0;
         this.data.layersAvailabes  = [];
-
-        console.log('new map', settings);
     }
 
     getLayer(z) {
@@ -1704,15 +1723,26 @@ class Map extends Entity {
     }
 
     setLayer(layers = {}, index) {
+        console.log('set new layer', layers, index);
         this.layers[index] = layers;
         this.data.nbLayers = Object.keys(this.layers).length;
         this.data.layersAvailabes = Object.values(this.layers).sort();
     }
 
-    add(gameElement, x, y, z) {
-        console.log('map add', gameElement)
-        if (this.layers.length > z) {
-            this.layers[z][x][y] = gameElement;
+    add(gameElement, x = 0, y = 0, z = 0) {
+        console.table(arguments);
+
+        if (typeof this.layers[z] !== 'undefined') {
+            if (typeof this.layers[z][x] !== 'undefined') {
+                this.layers[z][x][y] = gameElement;
+            }
+
+            else {
+                this.layers[z][x] = {};
+                this.layers[z][x][y] = gameElement;
+            }
+
+            console.log('added tile to existing layer', this.layers[z][x][y], gameElement);
         }
 
         else {
@@ -1723,38 +1753,38 @@ class Map extends Entity {
         }
     }
 
-    render(x_min, y_min, z_min, x_max, y_max, z_max, context) {
-        let layer, row = null;
-        for(let z = z_min; z < z_max; ++z) {
-            if (typeof this.layers[z] === 'undefined') {
-                continue;
-            }
+    // render(x_min, y_min, z_min, x_max, y_max, z_max, context) {
+    //     let layer, row = null;
+    //     for(let z = z_min; z < z_max; ++z) {
+    //         if (typeof this.layers[z] === 'undefined') {
+    //             continue;
+    //         }
 
-            else {
-                layer = this.layers[z];
-            }
+    //         else {
+    //             layer = this.layers[z];
+    //         }
 
-            for(let y = y_min; y < y_max; ++y) {
-                if (typeof layers[y] === 'undefined') {
-                    continue;
-                }
+    //         for(let y = y_min; y < y_max; ++y) {
+    //             if (typeof layers[y] === 'undefined') {
+    //                 continue;
+    //             }
     
-                else {
-                    row = layers[y];
-                }
+    //             else {
+    //                 row = layers[y];
+    //             }
 
-                for(let x = x_min; x < x_max; ++x) {
-                    if (typeof row[x] === "undefined") {
-                        continue
-                    }
+    //             for(let x = x_min; x < x_max; ++x) {
+    //                 if (typeof row[x] === "undefined") {
+    //                     continue
+    //                 }
 
-                    else {
-                        row[x].render(context, )
-                    }
-                }
-            }
-        }
-    }
+    //                 else {
+    //                     row[x].render(context)
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 
     getNbRows() {
         return this.data.nbRows;
@@ -1767,8 +1797,7 @@ class Map extends Entity {
     viewPortCellCoordsToMapCellCoords(viewportCellCoords) {
         const x = Math.floor(viewportCellCoords.x * this.getNbRows());
         const y = Math.floor(viewportCellCoords.y * this.getNbColumns());
-
-        console.log(x, y, viewportCellCoords,  this.getNbRows(),  this.getNbColumns());
+        return {x, y};
     }
     
 
@@ -1777,11 +1806,9 @@ class Map extends Entity {
 
         switch(notificationName) {
             case 'updateCoords':
-                console.log('updateCoords', notification.data);
                 this.viewPortCellCoordsToMapCellCoords(notification.data);
                 break;
             default:
-                console.log(notification);
                 break;
         } 
 
@@ -1810,25 +1837,21 @@ class TileMap extends Map {
     }
 
     add(tile, x = 0, y = 0, z = 0, width = 1, height = 1) {
-        console.log('tile add');
         tile.setPosition({x, y});
         tile.setSize({width, height});
 
-        console.log('tile', tile)
+        console.log('add tile', tile, x, y)
         super.add(tile, x, y, z);
     }
 
     getRenderingData(x_min = 0, y_min = 0, z_min = 0, x_max = this.getNbColumns(), y_max = this.getNbRows(), z_max = 10) {
         let layer, row = null;
-
-        console.table({z_min, z_max, y_min, y_max});
         let renderingData = [];
         let x, y, z;
 
 
        
         for(z = z_min; z < z_max; z++) {
-            console.log('i try z=', z)
             layer = this.getLayer(z);
             if (layer !== null) {
                 for(y = y_min; y < y_max; y++) {
@@ -1837,8 +1860,6 @@ class TileMap extends Map {
                         for(x = x_min; x < x_max; x++) {
                             if (typeof row[x] !== "undefined") {
                                 const elt = row[x];
-                                console.log('elt');
-                                console.table(elt.data);
                                 renderingData.push({
                                     gameElement: elt,
                                     x: elt.getX() / this.getNbColumns(),
@@ -1853,6 +1874,7 @@ class TileMap extends Map {
             }
         }
 
+        console.log('found for rendering theses data', renderingData);
         return renderingData;
     }
 

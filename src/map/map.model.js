@@ -29,8 +29,6 @@ class Map extends Entity {
         this.data.nbColumns        = settings.nbColumns || 10;
         this.data.nbLayers         = 0;
         this.data.layersAvailabes  = [];
-
-        console.log('new map', settings);
     }
 
     getLayer(z) {
@@ -38,15 +36,26 @@ class Map extends Entity {
     }
 
     setLayer(layers = {}, index) {
+        console.log('set new layer', layers, index);
         this.layers[index] = layers;
         this.data.nbLayers = Object.keys(this.layers).length;
         this.data.layersAvailabes = Object.values(this.layers).sort();
     }
 
-    add(gameElement, x, y, z) {
-        console.log('map add', gameElement)
-        if (this.layers.length > z) {
-            this.layers[z][x][y] = gameElement;
+    add(gameElement, x = 0, y = 0, z = 0) {
+        console.table(arguments);
+
+        if (typeof this.layers[z] !== 'undefined') {
+            if (typeof this.layers[z][x] !== 'undefined') {
+                this.layers[z][x][y] = gameElement;
+            }
+
+            else {
+                this.layers[z][x] = {};
+                this.layers[z][x][y] = gameElement;
+            }
+
+            console.log('added tile to existing layer', this.layers[z][x][y], gameElement);
         }
 
         else {
@@ -57,38 +66,38 @@ class Map extends Entity {
         }
     }
 
-    render(x_min, y_min, z_min, x_max, y_max, z_max, context) {
-        let layer, row = null;
-        for(let z = z_min; z < z_max; ++z) {
-            if (typeof this.layers[z] === 'undefined') {
-                continue;
-            }
+    // render(x_min, y_min, z_min, x_max, y_max, z_max, context) {
+    //     let layer, row = null;
+    //     for(let z = z_min; z < z_max; ++z) {
+    //         if (typeof this.layers[z] === 'undefined') {
+    //             continue;
+    //         }
 
-            else {
-                layer = this.layers[z];
-            }
+    //         else {
+    //             layer = this.layers[z];
+    //         }
 
-            for(let y = y_min; y < y_max; ++y) {
-                if (typeof layers[y] === 'undefined') {
-                    continue;
-                }
+    //         for(let y = y_min; y < y_max; ++y) {
+    //             if (typeof layers[y] === 'undefined') {
+    //                 continue;
+    //             }
     
-                else {
-                    row = layers[y];
-                }
+    //             else {
+    //                 row = layers[y];
+    //             }
 
-                for(let x = x_min; x < x_max; ++x) {
-                    if (typeof row[x] === "undefined") {
-                        continue
-                    }
+    //             for(let x = x_min; x < x_max; ++x) {
+    //                 if (typeof row[x] === "undefined") {
+    //                     continue
+    //                 }
 
-                    else {
-                        row[x].render(context, )
-                    }
-                }
-            }
-        }
-    }
+    //                 else {
+    //                     row[x].render(context)
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 
     getNbRows() {
         return this.data.nbRows;
@@ -101,8 +110,7 @@ class Map extends Entity {
     viewPortCellCoordsToMapCellCoords(viewportCellCoords) {
         const x = Math.floor(viewportCellCoords.x * this.getNbRows());
         const y = Math.floor(viewportCellCoords.y * this.getNbColumns());
-
-        console.log(x, y, viewportCellCoords,  this.getNbRows(),  this.getNbColumns());
+        return {x, y};
     }
     
 
@@ -111,11 +119,9 @@ class Map extends Entity {
 
         switch(notificationName) {
             case 'updateCoords':
-                console.log('updateCoords', notification.data);
                 this.viewPortCellCoordsToMapCellCoords(notification.data);
                 break;
             default:
-                console.log(notification);
                 break;
         } 
 

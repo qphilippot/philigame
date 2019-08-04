@@ -15,59 +15,47 @@
     <script>
       var page = {};
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('page is ready', window.GameDong);
+          console.log('page is ready', window.GameDong);
 
-            page.viewport = new GameDong.ViewPort({
-              container: 'gd-main-viewport'
+          page.viewport = new GameDong.ViewPort({
+            container: 'gd-main-viewport'
+          });
+
+          page.map = new GameDong.TileMap({
+            name: 'custom-map',
+            nbRows: 10,
+            nbColumns: 10
+          });
+
+
+
+          Promise.all([
+            GameDong.AssetManager.getImage('tile'),
+            GameDong.AssetManager.getImage('a')
+          ]).then(images => {
+            images.forEach((image, index) => {
+              const gameElement = new GameDong.GameElement();
+              gameElement.name = image.name;
+              gameElement.setTexture(image);
+              page.map.add(gameElement, index);
             });
 
-            page.map = new GameDong.TileMap({
-              name: 'custom-map',
-              nbRows: 10,
-              nbColumns: 10
+            const vp = page.viewport;
+            const resolution = vp.getResolution();
+            console.log('resolution', resolution);
+
+            page.map.getRenderingData().forEach(function(data) {
+              console.log('data', data);
+              data.gameElement.render(
+                page.viewport.getContext(), 
+                data.x * resolution.width, 
+                data.y * resolution.height,
+                data.width * resolution.width,
+                data.height * resolution.height,
+              )
             });
 
-
-
-            page.gameElt = new GameDong.GameElement();
-            window.tile = new Image();
-            window.tile.src = GameDong.AssetManager.get('tile');
-            window.tile.onload = () => {
-              console.log("tile =", window.tile);
-
-              document.getElementById('test-id').src = GameDong.AssetManager.get('tile');
-              page.gameElt.setTexture(window.tile);
-
-              page.map.add(page.gameElt);
-              const vp = page.viewport;
-              const resolution = vp.getResolution();
-              console.log('resolution', resolution);
-
-              page.map.getRenderingData().forEach(function(data) {
-                console.log('data', data);
-                data.gameElement.render(
-                  page.viewport.getContext(), 
-                  data.x * resolution.width, 
-                  data.y * resolution.height,
-                  data.width * resolution.width,
-                  data.height * resolution.height,
-                )
-              })
-
-              
-              // page.gameElt.setPosition({ x: 0, y: 0 });
-              // page.gameElt.setSize({ width: 10, height: 10 });
-              // page.gameElt.render(page.viewport.getContext());
-              
-              //page.viewport.register(page.map, 0, 0, 20, 20);
-              
-
-              // page.gameElt.setPosition({ x: 20, y: 20 });
-              // page.gameElt.render(page.viewport.getContext(), 20, 20, 20, 20);
-              
-
-              // page.coords2D = GameDong.Coords._2D.getOne();
-            }
+          })
         });
     </script>
 
