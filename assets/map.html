@@ -29,14 +29,12 @@
 
 
 
+          
           Promise.all([
-            GameDong.AssetManager.getImage('tile'),
-            GameDong.AssetManager.getImage('a')
-          ]).then(images => {
-            images.forEach((image, index) => {
-              const gameElement = new GameDong.GameElement();
-              gameElement.name = image.name;
-              gameElement.setTexture(image);
+            GameDong.AssetManager.getImageAsGameElement('tile'),
+            GameDong.AssetManager.getImageAsGameElement('a')
+          ]).then(gameElements => {
+            gameElements.forEach((gameElement, index) => {
               page.map.add(gameElement, index);
             });
 

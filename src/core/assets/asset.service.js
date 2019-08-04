@@ -1,4 +1,5 @@
 // const Asset = require('./asset.model')
+const GameElement = require('@core/game-element');
 
 class AssetManager {
     constructor() {
@@ -23,6 +24,17 @@ class AssetManager {
         });
     }
 
+    getImageAsGameElement(imageName) {
+        return new Promise(resolve => {
+            this.getImage(imageName).then(image => {
+                const elt = new GameElement();
+                elt.name = image.name;
+                elt.setTexture(image);
+
+                resolve(elt);
+            });
+        });
+    }
     delete(name) {
         delete this.ressources[name];
     }
