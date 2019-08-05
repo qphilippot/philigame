@@ -27,11 +27,11 @@
             nbColumns: 10
           });
 
-
-
-          // Retrieve image directly as game element using Asse
-            GameDong.AssetManager.getImage('tile').then(
-              image => {
+          Promise.all([
+            GameDong.AssetManager.getImage('a'),
+            GameDong.AssetManager.getImage('tile'),
+            GameDong.AssetManager.getImage('b'),
+          ]).then(images => {
                 const x_max = page.map.getNbColumns();           
                 const y_max = page.map.getNbRows();
                 // create game element from as
@@ -41,6 +41,7 @@
                 
                 for (let x = 0; x < x_max; x++) {
                   for (let y = 0; y < y_max; y++) {
+                    const image = images[Math.round(Math.random() * (images.length - 1))];
                     elt = new GameDong.GameElement();
                     elt.name = image.name;
                     elt.setTexture(image);

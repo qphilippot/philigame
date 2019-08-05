@@ -97,6 +97,17 @@ module.exports = __webpack_require__.p + "059f67d1ccb259a78d52cfa4f77f0ce9.png";
 
 /***/ }),
 
+/***/ "./assets/tiles/b.png":
+/*!****************************!*\
+  !*** ./assets/tiles/b.png ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "cddf5fd6d19cb195ddc8a4ac70469679.png";
+
+/***/ }),
+
 /***/ "./assets/tiles/tile.png":
 /*!*******************************!*\
   !*** ./assets/tiles/tile.png ***!
@@ -577,10 +588,9 @@ function unwrapListeners(arr) {
 
 module.exports = (GameDong) => {
     const AssetManager = GameDong.AssetManager;
-
-    console.log('asset manager', AssetManager);
     AssetManager.store('tile', __webpack_require__(/*! @assets/tiles/tile.png */ "./assets/tiles/tile.png"));
     AssetManager.store('a', __webpack_require__(/*! @assets/tiles/a.png */ "./assets/tiles/a.png"));
+    AssetManager.store('b', __webpack_require__(/*! @assets/tiles/b.png */ "./assets/tiles/b.png"));
 };
 
 /***/ }),
