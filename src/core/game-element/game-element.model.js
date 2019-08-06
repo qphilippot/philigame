@@ -24,6 +24,10 @@ class GameElement extends Entity {
         return this.data.size.height;
     }
 
+    getPosition() {
+        return this.data.position;
+    }
+    
     setPosition(position = {x: 0, y:0}) {
         this.data.position = position;
     }
@@ -33,8 +37,6 @@ class GameElement extends Entity {
     }
 
     setTexture(texture = null) {
-        console.log('setTexture', texture);
-        
         this.data.texture = texture;
     }
 
@@ -42,10 +44,19 @@ class GameElement extends Entity {
         const d = this.data;
         const p = d.position;
         const s = d.size;
+        
+        console.log(typeof x);
+        if (typeof x !== 'number') {
+            x = p.x;
+        }
 
-console.log('params', x, y, w, h);
-        console.log('render', d.texture, x || p.x, y || p.y, w || s.width, h || s.height)
-        context.drawImage(d.texture, x || p.x, y || p.y, w || s.width, h || s.height);
+
+        if (typeof y !== 'number') {
+            y = p.y;
+        }
+ 
+        console.log('draw image', x, y, w || s.width, h || s.height)
+        context.drawImage(d.texture, x, y, w || s.width, h || s.height);
         // context.drawImage(d.texture, x, y, w, h);
     }
 }

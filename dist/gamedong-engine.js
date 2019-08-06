@@ -606,6 +606,7 @@ module.exports = (app) => {
     app.AssetManager = __webpack_require__(/*! @core/assets */ "./src/core/assets/index.js");
     app.Map = __webpack_require__(/*! ../map */ "./src/map/index.js");
     app.TileMap = __webpack_require__(/*! ../map/tile-map.model */ "./src/map/tile-map.model.js");
+    app.Camera = __webpack_require__(/*! ../camera */ "./src/camera/index.js");
     app.Coords = __webpack_require__(/*! @core/coords */ "./src/core/coords/index.js");
     app.ViewPort = __webpack_require__(/*! @core/viewport */ "./src/core/viewport/index.js");
     app.GameElement = __webpack_require__(/*! @core/game-element */ "./src/core/game-element/index.js");
@@ -632,7 +633,6 @@ module.exports = __webpack_require__(/*! ./main */ "./src/app/main.js");
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-console.log('main hello');
 const app = {};
 
 try {
@@ -645,12 +645,142 @@ catch(error) {
 }
 
 finally {
-    console.log('app', app)
     window.GameDong = app;
-    console.log('GameDong', app)
 }
 
 module.exports  = app;
+
+/***/ }),
+
+/***/ "./src/camera/index.js":
+/*!*****************************!*\
+  !*** ./src/camera/index.js ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const GameElement = __webpack_require__(/*! @core/game-element */ "./src/core/game-element/index.js");
+const Coords = __webpack_require__(/*! @core/coords */ "./src/core/coords/index.js");
+
+class Camera extends GameElement {
+    constructor(settings) {
+        super(settings);
+        
+        this.radius = settings.radius || 10;
+        // this.data.position = settings.coords || Coords._2D.getOne();
+    }
+
+    // setCoords(coords) {
+    //     this.data.coords.set(coords);
+    // }
+
+    // getCoords() {
+    //     return this.data.coords;
+    // }
+
+    setScene(scene) {
+        this.data.scene = scene;
+    }
+
+    getScene() {
+        return this.data.scene;
+    }
+
+    snapshot(viewport) {
+        // means render
+
+        const resolution = viewport.getResolution();
+        const size = viewport.getSize();
+        const context = viewport.getContext();
+        const rx = resolution.width;
+        const ry = resolution.height;
+        // const vw = size.width;
+        // const vh = size.height;
+
+        const position = this.getPosition();
+        console.log('position')
+        console.table(position)
+        const pos_x = position.x;
+        const pos_y = position.y;
+
+        const r = this.radius;
+        console.table(
+            pos_x - this.radius,
+            pos_y - this.radius,
+            0,
+            pos_x + this.radius,
+            pos_y + this.radius,
+            10,
+            this.radius
+        )
+
+
+        const nbRows = this.data.scene.getNbRows();
+        const nbColumns = this.data.scene.getNbColumns();
+
+        
+        const renderingData = this.data.scene.getRenderingData(
+            Math.trunc(pos_x * (nbColumns )) - this.radius,
+            Math.trunc(pos_y * (nbRows )) - this.radius,
+            0,
+            Math.trunc(pos_x * (nbColumns )) + this.radius,
+            Math.trunc(pos_y * (nbRows )) + this.radius,
+            10
+        );
+
+
+    
+        const delta = this.radius / nbColumns; 
+
+
+        console.log('radius of', this.radius, 'means ', delta , 'offset in map coords');
+        console.log('radius:', this.radius, 'nbColumns: ', nbColumns);
+
+        
+        const x0 = pos_x - delta;
+        const y0 = pos_y - delta;
+
+        const xn = pos_x + delta; 
+        const yn = pos_y + delta
+
+
+        console.table({x0, y0, xn, yn});
+        console.log("elt found :", renderingData.length);
+        // data.x is a normalized position into map
+        // we want to transform theses coordinates in 0..1 coordinates in camera grid
+        renderingData.forEach((data, index) => {
+            const x = Math.round(((data.x - x0) / (xn - x0)) * rx);
+            const y = Math.round(((data.y - y0) / (yn - y0)) * rx);
+            const w = Math.round(((data.width) / (delta * 2)) * rx);
+            const h = Math.round(((data.height) / (delta * 2)) * rx);
+
+            if (index <  5 ) {
+                console.table({
+                    texture: data.texture,
+                    px: data.x, py: data.y, pw: data.width, ph: data.height,
+                    x, y, w, h
+                });
+            }
+            data.gameElement.render(
+                context, 
+                x, y, w, h
+                // (pos_x  data.x) * (rx / d), 
+                // (pos_y - data.y + 0.5) * (ry / d), 
+                // data.width * (rx / d), 
+                // data.height * (ry / d), 
+                // (data.y * (this.radius / ry)) * vh,
+                // data.width *(this.radius / rx) * vw,
+                // data.height *(this.radius / ry) * vh,
+            )
+        });
+    }
+
+    destroy() {
+        // this.data.coords.recycle();
+    }
+}
+
+module.exports = Camera;
 
 /***/ }),
 
@@ -670,7 +800,6 @@ class AssetManager {
     }
 
     store(name, data) {
-        console.log('store', name, data);
         this.ressources[name] = data;
     }
 
@@ -755,7 +884,6 @@ class POOL {
     initPool() {
         const capacity = this.getCapacity();
         for(let i = 0; i < capacity; ++i) {
-            console.log(this.type);
             this.data[i] = new (this.type)();
         }
     }
@@ -1320,6 +1448,10 @@ class GameElement extends Entity {
         return this.data.size.height;
     }
 
+    getPosition() {
+        return this.data.position;
+    }
+    
     setPosition(position = {x: 0, y:0}) {
         this.data.position = position;
     }
@@ -1329,8 +1461,6 @@ class GameElement extends Entity {
     }
 
     setTexture(texture = null) {
-        console.log('setTexture', texture);
-        
         this.data.texture = texture;
     }
 
@@ -1338,10 +1468,19 @@ class GameElement extends Entity {
         const d = this.data;
         const p = d.position;
         const s = d.size;
+        
+        console.log(typeof x);
+        if (typeof x !== 'number') {
+            x = p.x;
+        }
 
-console.log('params', x, y, w, h);
-        console.log('render', d.texture, x || p.x, y || p.y, w || s.width, h || s.height)
-        context.drawImage(d.texture, x || p.x, y || p.y, w || s.width, h || s.height);
+
+        if (typeof y !== 'number') {
+            y = p.y;
+        }
+ 
+        console.log('draw image', x, y, w || s.width, h || s.height)
+        context.drawImage(d.texture, x, y, w || s.width, h || s.height);
         // context.drawImage(d.texture, x, y, w, h);
     }
 }
@@ -1371,10 +1510,8 @@ module.exports = __webpack_require__(/*! ./game-element.model */ "./src/core/gam
 const Notification = __webpack_require__(/*! ./notification.model */ "./src/core/notification/notification.model.js");
 const POOL = __webpack_require__(/*! ./notification.POOL */ "./src/core/notification/notification.POOL.js");
 
-console.log('Notification.POOL', Notification.POOL)
 if (Notification.POOL === null) {
     Notification.POOL = new POOL();
-    console.log('Notification.POOL', Notification.POOL)
 }
 
 module.exports = Notification;
@@ -1393,7 +1530,6 @@ const POOL = __webpack_require__(/*! ../components/POOL.model */ "./src/core/com
 
 class NotificationPOOL extends POOL {
     constructor(settings) {
-        console.log(Notification);
         super({
             type: Notification,
             capacity: 10
@@ -1451,7 +1587,6 @@ class Notification {
 }
 
 if (typeof Notification.POOL === 'undefined') {
-    console.log('POOL is undefined');
     Notification.POOL = null;
 }
 
@@ -1517,29 +1652,60 @@ class ViewPort extends Entity {
         });
     }
 
+    retrieveSize(settings) {
+        if (typeof settings.size === 'undefined') {
+            settings.size = {
+                width: 0,
+                height: 0
+            }
+        }
+
+        else {
+            // sanitize options
+        }
+
+
+        return settings.size;
+    }
+
+
+    retrieveResolution(settings) {
+        if (typeof settings.resolution === 'undefined') {
+            settings.resolution = {
+                width: settings.size.width,
+                height: settings.size.height
+            }
+        }
+
+        else {
+            // sanitize options
+        }
+
+        return settings.resolution;
+    }
+
     initViewPort(settings) {
         const layout = this.ui.layout; 
         layout.classList.add('gd-viewport');
         layout.context = layout.getContext('2d');
 
-        this.data.size = {
-            width: 0,
-            height: 0,
-        };
+        
 
-        this.data.ratio = {
+        const data = this.data;
+        data.size = {};
+        data.resolution = {};
+        data.ratio = {
             x: 1,
             y: 1
         };
 
-        this.data.resolution = {
-            width: 0,
-            height: 0,
-        };
+
+        const size = this.retrieveSize(settings);
+        const resolution = this.retrieveResolution(settings);
 
         // this.setPixelDensity(1);
-        this.setSize(300, 300, false);
-        this.setResolution(300, 300);
+        this.setSize(size.width, size.height, false);
+        this.setResolution(resolution.width, resolution.height);
 
        
         
@@ -1574,7 +1740,7 @@ class ViewPort extends Entity {
     }
 
     getSize() {
-        return JSON.parse(JSON.stringify(this.data.size));
+        return this.data.size;
     }
 
     getWidth() {
@@ -1625,9 +1791,6 @@ class ViewPort extends Entity {
     getPixelsCoordsFromPageCoords(coords) {
         const x = coords.x - this.ui.layout.offsetLeft + window.scrollX;
         const y = coords.y - this.ui.layout.offsetTop + window.scrollY;
-
-        console.log('htmlCoordsToCanvasPixelsCoords', x, y);
-
         return {x, y};
     }
 
@@ -1639,17 +1802,12 @@ class ViewPort extends Entity {
         const ratio  = this.data.ratio;
         const x      = Math.floor(coords.x * ratio.x);
         const y      = Math.floor(coords.y * ratio.y);
-        console.log('getCellCoordsFromPixelCoords', x, y);
-
         return {x, y};
     }
 
     getNormalizedPosition(coords) {
         const x = (coords.x - this.ui.layout.offsetLeft + window.scrollX) / this.data.size.width;
         const y = (coords.y - this.ui.layout.offsetTop + window.scrollY) / this.data.size.height;
-
-        console.log('getNormalizedPosition', x, y);
-
         return {x, y};
     }
 }
@@ -1676,8 +1834,6 @@ class ViewPortMouseController extends MouseController {
         const pixelCoords = this.component.getPixelsCoordsFromPageCoords(event);
         const cellCoords = this.component.getCellCoordsFromPixelCoords(pixelCoords);
         const p = this.component.getNormalizedPosition(event);
-
-        console.log('send notification')
         this.component.sendNotification('updateCoords', p);
     }
 }
@@ -1745,15 +1901,12 @@ class Map extends Entity {
     }
 
     setLayer(layers = {}, index) {
-        console.log('set new layer', layers, index);
         this.layers[index] = layers;
         this.data.nbLayers = Object.keys(this.layers).length;
         this.data.layersAvailabes = Object.values(this.layers).sort();
     }
 
     add(gameElement, x = 0, y = 0, z = 0) {
-        console.table(arguments);
-
         if (typeof this.layers[z] !== 'undefined') {
             if (typeof this.layers[z][x] !== 'undefined') {
                 this.layers[z][x][y] = gameElement;
@@ -1763,8 +1916,6 @@ class Map extends Entity {
                 this.layers[z][x] = {};
                 this.layers[z][x][y] = gameElement;
             }
-
-            console.log('added tile to existing layer', this.layers[z][x][y], gameElement);
         }
 
         else {
@@ -1861,8 +2012,6 @@ class TileMap extends Map {
     add(tile, x = 0, y = 0, z = 0, width = 1, height = 1) {
         tile.setPosition({x, y});
         tile.setSize({width, height});
-
-        console.log('add tile', tile, x, y)
         super.add(tile, x, y, z);
     }
 
@@ -1873,7 +2022,22 @@ class TileMap extends Map {
     }
 
 
+    getRenderingDataFromNormalizedCoords(x_min = 0, y_min = 0, z_min = 0, x_max = 0, y_max = 1, z_max = 1) {
+        const nbColumns = this.getNbColumns();
+        const nbRows = this.getNbRows();
+        return this.getRenderingData(
+            Math.round(x_min *  nbColumns),
+            Math.round(y_min *  nbRows),
+            z_min,
+            Math.round(x_max *  nbColumns),
+            Math.round(y_min *  nbRows),
+            z_max,
+        );
+    }
+
     getRenderingData(x_min = 0, y_min = 0, z_min = 0, x_max = this.getNbColumns(), y_max = this.getNbRows(), z_max = 10) {
+        console.log('get rendering data')
+        console.table({x_max, y_min, x_max, y_max});
         let layer, row = null;
         let renderingData = [];
         let x, y, z;
@@ -1903,10 +2067,10 @@ class TileMap extends Map {
             }
         }
 
-        console.log('found for rendering theses data', renderingData);
         return renderingData;
     }
 
+    
     getNbRows() {
         return this.data.nbRows;
     }
@@ -1917,8 +2081,7 @@ class TileMap extends Map {
     viewPortCellCoordsToMapCellCoords(viewportCellCoords) {
         const x = Math.floor(viewportCellCoords.x * this.getNbRows());
         const y = Math.floor(viewportCellCoords.y * this.getNbColumns());
-
-        console.log(x, y, viewportCellCoords,  this.getNbRows(),  this.getNbColumns());
+        return {x, y};
     }
     
 
@@ -1927,7 +2090,6 @@ class TileMap extends Map {
 
         switch(notificationName) {
             case 'updateCoords':
-                console.log('updateCoords', notification.data);
                 this.viewPortCellCoordsToMapCellCoords(notification.data);
                 break;
             default:

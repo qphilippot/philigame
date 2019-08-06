@@ -3,7 +3,6 @@ const POOL = require('../components/POOL.model');
 
 class NotificationPOOL extends POOL {
     constructor(settings) {
-        console.log(Notification);
         super({
             type: Notification,
             capacity: 10

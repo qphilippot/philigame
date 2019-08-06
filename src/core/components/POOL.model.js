@@ -17,7 +17,6 @@ class POOL {
     initPool() {
         const capacity = this.getCapacity();
         for(let i = 0; i < capacity; ++i) {
-            console.log(this.type);
             this.data[i] = new (this.type)();
         }
     }

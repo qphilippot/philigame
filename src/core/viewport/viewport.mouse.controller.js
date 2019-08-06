@@ -9,8 +9,6 @@ class ViewPortMouseController extends MouseController {
         const pixelCoords = this.component.getPixelsCoordsFromPageCoords(event);
         const cellCoords = this.component.getCellCoordsFromPixelCoords(pixelCoords);
         const p = this.component.getNormalizedPosition(event);
-
-        console.log('send notification')
         this.component.sendNotification('updateCoords', p);
     }
 }

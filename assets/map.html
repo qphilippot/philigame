@@ -15,16 +15,18 @@
     <script>
       var page = {};
         document.addEventListener('DOMContentLoaded', function() {
-          console.log('page is ready', window.GameDong);
-
           page.viewport = new GameDong.ViewPort({
-            container: 'gd-main-viewport'
+            container: 'gd-main-viewport',
+            size: {
+              width: 500,
+              height: 500
+            }
           });
 
           page.map = new GameDong.TileMap({
             name: 'custom-map',
-            nbRows: 10,
-            nbColumns: 10
+            nbRows: 100,
+            nbColumns: 100
           });
 
           Promise.all([
@@ -50,21 +52,25 @@
                   }  
                 }
 
-                
-            const vp = page.viewport;
-            const resolution = vp.getResolution();
-            console.log('resolution', resolution);
-
-            page.map.getRenderingData().forEach(function(data) {
-              console.log('data', data);
-              data.gameElement.render(
-                page.viewport.getContext(), 
-                data.x * resolution.width, 
-                data.y * resolution.height,
-                data.width * resolution.width,
-                data.height * resolution.height,
-              )
+            page.camera = new GameDong.Camera({
+              radius: 5,
+              position: {
+                x: 0.5,
+                y: 0.5
+              }
             });
+            
+            page.camera.setScene(page.map);
+            page.camera.snapshot(page.viewport);
+            // page.map.getRenderingData().forEach(function(data) {
+            //   data.gameElement.render(
+            //     page.viewport.getContext(), 
+            //     data.x * resolution.width, 
+            //     data.y * resolution.height,
+            //     data.width * resolution.width,
+            //     data.height * resolution.height,
+            //   )
+            // });
 
           })
         });

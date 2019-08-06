@@ -36,15 +36,12 @@ class Map extends Entity {
     }
 
     setLayer(layers = {}, index) {
-        console.log('set new layer', layers, index);
         this.layers[index] = layers;
         this.data.nbLayers = Object.keys(this.layers).length;
         this.data.layersAvailabes = Object.values(this.layers).sort();
     }
 
     add(gameElement, x = 0, y = 0, z = 0) {
-        console.table(arguments);
-
         if (typeof this.layers[z] !== 'undefined') {
             if (typeof this.layers[z][x] !== 'undefined') {
                 this.layers[z][x][y] = gameElement;
@@ -54,8 +51,6 @@ class Map extends Entity {
                 this.layers[z][x] = {};
                 this.layers[z][x][y] = gameElement;
             }
-
-            console.log('added tile to existing layer', this.layers[z][x][y], gameElement);
         }
 
         else {

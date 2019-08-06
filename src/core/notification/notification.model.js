@@ -26,7 +26,6 @@ class Notification {
 }
 
 if (typeof Notification.POOL === 'undefined') {
-    console.log('POOL is undefined');
     Notification.POOL = null;
 }
 

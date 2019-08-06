@@ -7,7 +7,6 @@ class AssetManager {
     }
 
     store(name, data) {
-        console.log('store', name, data);
         this.ressources[name] = data;
     }
 

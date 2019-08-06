@@ -8,8 +8,6 @@ class TileMap extends Map {
     add(tile, x = 0, y = 0, z = 0, width = 1, height = 1) {
         tile.setPosition({x, y});
         tile.setSize({width, height});
-
-        console.log('add tile', tile, x, y)
         super.add(tile, x, y, z);
     }
 
@@ -20,7 +18,22 @@ class TileMap extends Map {
     }
 
 
+    getRenderingDataFromNormalizedCoords(x_min = 0, y_min = 0, z_min = 0, x_max = 0, y_max = 1, z_max = 1) {
+        const nbColumns = this.getNbColumns();
+        const nbRows = this.getNbRows();
+        return this.getRenderingData(
+            Math.round(x_min *  nbColumns),
+            Math.round(y_min *  nbRows),
+            z_min,
+            Math.round(x_max *  nbColumns),
+            Math.round(y_min *  nbRows),
+            z_max,
+        );
+    }
+
     getRenderingData(x_min = 0, y_min = 0, z_min = 0, x_max = this.getNbColumns(), y_max = this.getNbRows(), z_max = 10) {
+        console.log('get rendering data')
+        console.table({x_max, y_min, x_max, y_max});
         let layer, row = null;
         let renderingData = [];
         let x, y, z;
@@ -50,10 +63,10 @@ class TileMap extends Map {
             }
         }
 
-        console.log('found for rendering theses data', renderingData);
         return renderingData;
     }
 
+    
     getNbRows() {
         return this.data.nbRows;
     }
@@ -64,8 +77,7 @@ class TileMap extends Map {
     viewPortCellCoordsToMapCellCoords(viewportCellCoords) {
         const x = Math.floor(viewportCellCoords.x * this.getNbRows());
         const y = Math.floor(viewportCellCoords.y * this.getNbColumns());
-
-        console.log(x, y, viewportCellCoords,  this.getNbRows(),  this.getNbColumns());
+        return {x, y};
     }
     
 
@@ -74,7 +86,6 @@ class TileMap extends Map {
 
         switch(notificationName) {
             case 'updateCoords':
-                console.log('updateCoords', notification.data);
                 this.viewPortCellCoordsToMapCellCoords(notification.data);
                 break;
             default:

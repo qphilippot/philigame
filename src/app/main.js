@@ -1,4 +1,3 @@
-console.log('main hello');
 const app = {};
 
 try {
@@ -11,9 +10,7 @@ catch(error) {
 }
 
 finally {
-    console.log('app', app)
     window.GameDong = app;
-    console.log('GameDong', app)
 }
 
 module.exports  = app;
