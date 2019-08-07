@@ -8,6 +8,11 @@ class GameElement extends Entity {
         this.setPosition(settings.position)
     }
 
+    move(delta) {
+        this.data.position.x += delta.x;
+        this.data.position.y += delta.y;
+    }
+
     getX() {
         return this.data.position.x;
     }
@@ -55,7 +60,6 @@ class GameElement extends Entity {
             y = p.y;
         }
  
-        console.log('draw image', x, y, w || s.width, h || s.height)
         context.drawImage(d.texture, x, y, w || s.width, h || s.height);
         // context.drawImage(d.texture, x, y, w, h);
     }

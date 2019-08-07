@@ -70,6 +70,12 @@ class ViewPort extends Entity {
         return settings.resolution;
     }
 
+    clear() {
+        const context = this.getContext();
+        const resolution = this.getResolution();
+        context.clearRect(0, 0, resolution.width, resolution.height);
+    }
+    
     initViewPort(settings) {
         const layout = this.ui.layout; 
         layout.classList.add('gd-viewport');

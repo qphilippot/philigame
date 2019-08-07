@@ -33,8 +33,8 @@ class TileMap extends Map {
 
     getRenderingData(x_min = 0, y_min = 0, z_min = 0, x_max = this.getNbColumns(), y_max = this.getNbRows(), z_max = 10) {
         console.log('get rendering data')
-        console.table({x_max, y_min, x_max, y_max});
-        let layer, row = null;
+        console.table({x_min, y_min, x_max, y_max});
+        let layer, column = null;
         let renderingData = [];
         let x, y, z;
 
@@ -43,12 +43,12 @@ class TileMap extends Map {
         for(z = z_min; z < z_max; z++) {
             layer = this.getLayer(z);
             if (layer !== null) {
-                for(y = y_min; y < y_max; y++) {
-                    if (typeof layer[y] !== 'undefined') {
-                        row = layer[y];
-                        for(x = x_min; x < x_max; x++) {
-                            if (typeof row[x] !== "undefined") {
-                                const elt = row[x];
+                for(x = x_min; x < x_max; x++) {
+                    if (typeof layer[x] !== 'undefined') {
+                        column = layer[x];
+                        for(y = y_min; y < y_max; y++) {
+                            if (typeof column[y] !== "undefined") {
+                                const elt = column[y];
                                 renderingData.push({
                                     gameElement: elt,
                                     x: elt.getX() / this.getNbColumns(),

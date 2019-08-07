@@ -702,22 +702,8 @@ class Camera extends GameElement {
         console.table(position)
         const pos_x = position.x;
         const pos_y = position.y;
-
-        const r = this.radius;
-        console.table(
-            pos_x - this.radius,
-            pos_y - this.radius,
-            0,
-            pos_x + this.radius,
-            pos_y + this.radius,
-            10,
-            this.radius
-        )
-
-
         const nbRows = this.data.scene.getNbRows();
         const nbColumns = this.data.scene.getNbColumns();
-
         
         const renderingData = this.data.scene.getRenderingData(
             Math.trunc(pos_x * (nbColumns )) - this.radius,
@@ -731,17 +717,15 @@ class Camera extends GameElement {
 
     
         const delta = this.radius / nbColumns; 
-
-
         console.log('radius of', this.radius, 'means ', delta , 'offset in map coords');
         console.log('radius:', this.radius, 'nbColumns: ', nbColumns);
 
         
-        const x0 = pos_x - delta;
-        const y0 = pos_y - delta;
+        const x0 = Math.round((pos_x - delta) * nbColumns) / nbColumns;
+        const y0 = Math.round((pos_y - delta) * nbRows) / nbRows;
 
-        const xn = pos_x + delta; 
-        const yn = pos_y + delta
+        const xn = Math.round((pos_x + delta) * nbColumns) / nbColumns; 
+        const yn = Math.round((pos_y + delta) * nbRows) / nbRows
 
 
         console.table({x0, y0, xn, yn});
@@ -754,7 +738,8 @@ class Camera extends GameElement {
             const w = Math.round(((data.width) / (delta * 2)) * rx);
             const h = Math.round(((data.height) / (delta * 2)) * rx);
 
-            if (index <  5 ) {
+            if (index <  1 ) {
+                console.log(data.gameElement);
                 console.table({
                     texture: data.texture,
                     px: data.x, py: data.y, pw: data.width, ph: data.height,
@@ -1432,6 +1417,11 @@ class GameElement extends Entity {
         this.setPosition(settings.position)
     }
 
+    move(delta) {
+        this.data.position.x += delta.x;
+        this.data.position.y += delta.y;
+    }
+
     getX() {
         return this.data.position.x;
     }
@@ -1479,7 +1469,6 @@ class GameElement extends Entity {
             y = p.y;
         }
  
-        console.log('draw image', x, y, w || s.width, h || s.height)
         context.drawImage(d.texture, x, y, w || s.width, h || s.height);
         // context.drawImage(d.texture, x, y, w, h);
     }
@@ -1684,6 +1673,12 @@ class ViewPort extends Entity {
         return settings.resolution;
     }
 
+    clear() {
+        const context = this.getContext();
+        const resolution = this.getResolution();
+        context.clearRect(0, 0, resolution.width, resolution.height);
+    }
+    
     initViewPort(settings) {
         const layout = this.ui.layout; 
         layout.classList.add('gd-viewport');
@@ -2037,8 +2032,8 @@ class TileMap extends Map {
 
     getRenderingData(x_min = 0, y_min = 0, z_min = 0, x_max = this.getNbColumns(), y_max = this.getNbRows(), z_max = 10) {
         console.log('get rendering data')
-        console.table({x_max, y_min, x_max, y_max});
-        let layer, row = null;
+        console.table({x_min, y_min, x_max, y_max});
+        let layer, column = null;
         let renderingData = [];
         let x, y, z;
 
@@ -2047,12 +2042,12 @@ class TileMap extends Map {
         for(z = z_min; z < z_max; z++) {
             layer = this.getLayer(z);
             if (layer !== null) {
-                for(y = y_min; y < y_max; y++) {
-                    if (typeof layer[y] !== 'undefined') {
-                        row = layer[y];
-                        for(x = x_min; x < x_max; x++) {
-                            if (typeof row[x] !== "undefined") {
-                                const elt = row[x];
+                for(x = x_min; x < x_max; x++) {
+                    if (typeof layer[x] !== 'undefined') {
+                        column = layer[x];
+                        for(y = y_min; y < y_max; y++) {
+                            if (typeof column[y] !== "undefined") {
+                                const elt = column[y];
                                 renderingData.push({
                                     gameElement: elt,
                                     x: elt.getX() / this.getNbColumns(),

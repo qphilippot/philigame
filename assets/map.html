@@ -60,8 +60,48 @@
               }
             });
             
+            
             page.camera.setScene(page.map);
             page.camera.snapshot(page.viewport);
+            document.addEventListener('keydown', function(event) {
+              var delta = {x: 0, y: 0};
+              switch(event.keyCode) {
+                // left
+                case 37:
+
+                console.log('lef')
+                  delta.x -= 1 / page.map.getNbColumns();
+                  break;
+                // up
+                case 38:
+
+                console.log('up')
+                  delta.y -= 1 / page.map.getNbRows();
+                  break;
+                // right
+                case 39:
+
+                console.log('right')
+                  delta.x += 1 / page.map.getNbColumns();
+                  break;
+                // down
+                case 40:
+                  console.log('Down')
+                  delta.y += 1 / page.map.getNbRows();
+                  break;
+              }
+
+
+              page.viewport.clear();
+
+              console.table(delta);
+              if (delta.x !== 0 || delta.y !== 0) {
+
+                page.camera.move(delta);
+                console.table(page.camera.getPosition);
+                page.camera.snapshot(page.viewport);
+              }
+            });
             // page.map.getRenderingData().forEach(function(data) {
             //   data.gameElement.render(
             //     page.viewport.getContext(), 
