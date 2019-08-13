@@ -9,6 +9,19 @@ class ViewPort extends Entity {
         this.initViewPort(settings);
     }
 
+    drawCoordinates() {
+        const context = this.getContext();
+        const { width, height } = this.getResolution();
+
+        context.font = '1px serif';
+        console.table({width, height})
+        for (let i = 0; i < width; i++) {
+            for (let j = 0; j < height; j++) {
+                context.fillText(`(${i}, ${j})`, i, j);
+            }    
+        }
+    }
+
     getContext() {
         return this.ui.layout.context;
     }

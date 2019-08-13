@@ -37,7 +37,7 @@ class Camera extends GameElement {
         // const vh = size.height;
 
         const position = this.getPosition();
-        console.log('position')
+        console.log('position de la caméra')
         console.table(position)
         const pos_x = position.x;
         const pos_y = position.y;
@@ -45,11 +45,11 @@ class Camera extends GameElement {
         const nbColumns = this.data.scene.getNbColumns();
         
         const renderingData = this.data.scene.getRenderingData(
-            Math.trunc(pos_x * (nbColumns )) - this.radius,
-            Math.trunc(pos_y * (nbRows )) - this.radius,
+            Math.round(pos_x * (nbColumns )) - this.radius,
+            Math.round(pos_y * (nbRows )) - this.radius,
             0,
-            Math.trunc(pos_x * (nbColumns )) + this.radius,
-            Math.trunc(pos_y * (nbRows )) + this.radius,
+            Math.round(pos_x * (nbColumns )) + this.radius,
+            Math.round(pos_y * (nbRows )) + this.radius,
             10
         );
 
@@ -66,25 +66,41 @@ class Camera extends GameElement {
         const xn = Math.round((pos_x + delta) * nbColumns) / nbColumns; 
         const yn = Math.round((pos_y + delta) * nbRows) / nbRows
 
+        context.font = '20px';
+            
+        console.log('renderingData', renderingData);
 
-        console.table({x0, y0, xn, yn});
-        console.log("elt found :", renderingData.length);
+        console.table({x0, y0, xn, yn, rx});
+        console.table({
+            "elt-found" : renderingData.length,
+             expected: 4 * this.radius * this.radius
+        });
         // data.x is a normalized position into map
         // we want to transform theses coordinates in 0..1 coordinates in camera grid
         renderingData.forEach((data, index) => {
-            const x = Math.round(((data.x - x0) / (xn - x0)) * rx);
-            const y = Math.round(((data.y - y0) / (yn - y0)) * rx);
-            const w = Math.round(((data.width) / (delta * 2)) * rx);
-            const h = Math.round(((data.height) / (delta * 2)) * rx);
+            // const x = Math.round(((data.x - x0) / (xn - x0)) * rx);
+            // const y = Math.round(((data.y - y0) / (yn - y0)) * rx);
+            const x = Math.round((((data.x - x0) * 100) / (2 * delta)) * rx) / 100;
+            const y = Math.round((((data.y - y0) * 100) / (2 * delta)) * rx) / 100;
+            const w = Math.round((((data.width)  * 100) / (delta * 2)) * rx) / 100;
+            const h = Math.round((((data.height) * 100) / (delta * 2)) * rx) / 100;
 
-            if (index <  1 ) {
+            if (x <  0 || y < 0) {
                 console.log(data.gameElement);
                 console.table({
                     texture: data.texture,
                     px: data.x, py: data.y, pw: data.width, ph: data.height,
-                    x, y, w, h
+                    x0, y0, x, y, w, h
                 });
             }
+            // for (let i = 0; i < width; i++) {
+            //     for (let j = 0; j < height; j++) {
+            //         context.fillText(`(${i}, ${j})`, i, j);
+            //     }    
+            // }
+
+            // context.fillText(`(${x}, ${y})`, x + w, y + h);
+           
             data.gameElement.render(
                 context, 
                 x, y, w, h
@@ -96,6 +112,9 @@ class Camera extends GameElement {
                 // data.width *(this.radius / rx) * vw,
                 // data.height *(this.radius / ry) * vh,
             )
+
+            context.fillText(`(${x}, ${y})`, x, y + 10);
+            context.fillText(`(${data.x}, ${data.y})`, x, y + 20);
         });
     }
 
