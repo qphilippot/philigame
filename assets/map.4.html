@@ -29,12 +29,11 @@
             nbColumns: 100
           });
 
-          Promise.all(
-            Object.keys(GameDong.AssetManager.ressources)
-              .map(
-                name => GameDong.AssetManager.getImage(name)
-              )
-          ).then(images => {
+          Promise.all([
+            GameDong.AssetManager.getImage('a'),
+            GameDong.AssetManager.getImage('tile'),
+            GameDong.AssetManager.getImage('b'),
+          ]).then(images => {
                 const x_max = page.map.getNbColumns();           
                 const y_max = page.map.getNbRows();
                 // create game element from as
@@ -117,5 +116,5 @@
         });
     </script>
 
-  <script type="text/javascript" src="gamedong-engine.js"></script></body>
+  </body>
 </html>

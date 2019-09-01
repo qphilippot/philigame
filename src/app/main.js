@@ -2,7 +2,9 @@ const app = {};
 
 try {
     require('./class.loader')(app);
+    require('@autoload')(app);
     require('./assets.loader')(app);
+   
 }
 
 catch(error) {

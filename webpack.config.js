@@ -45,9 +45,16 @@ module.exports = {
 
       {
         test: /\.(png|svg|jpg|gif)$/,
-        use: [
-          'file-loader'
-        ]
+        loader: 'file-loader',
+        options: {
+          name(file) {
+            if (process.env.NODE_ENV === 'development') {
+              return '[path][name].[ext]';
+            }
+
+            return '[contenthash].[ext]';
+          },
+        }
       }
     ]
   },
@@ -56,7 +63,8 @@ module.exports = {
 
     alias: {
       '@core': path.resolve(__dirname, './src/core'),
-      '@assets': path.resolve(__dirname, './assets')
+      '@assets': path.resolve(__dirname, './assets'),
+      '@autoload': path.resolve(__dirname, 'autoload')
       
     }
   },
