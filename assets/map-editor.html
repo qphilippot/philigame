@@ -29,11 +29,6 @@
             nbColumns: 100
           });
 
-          GameDong.tileset = new GameDong.TileSet({
-            name: 'grass',
-            assetManager: GameDong.AssetManager
-          });
-
           Promise.all(
             Object.keys(GameDong.AssetManager.ressources)
               .map(

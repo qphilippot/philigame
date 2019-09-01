@@ -494,13 +494,13 @@ webpackContext.id = "./autoload sync recursive ^.*\\/sample\\-1\\.tileset\\.load
 module.exports = (GameDong) => {
     const AssetManager = GameDong.AssetManager;
     const prefix = '/home/quentin/dev/gamedong/gamedong-engine/assets/tileset/grass';
-    AssetManager.store('tilable-IMG_0044-dark.png', __webpack_require__(/*! ./assets/tileset/grass/tilable-IMG_0044-dark.png */ "./assets/tileset/grass/tilable-IMG_0044-dark.png"));
-    AssetManager.store('tilable-IMG_0044-grey.png', __webpack_require__(/*! ./assets/tileset/grass/tilable-IMG_0044-grey.png */ "./assets/tileset/grass/tilable-IMG_0044-grey.png"));
-    AssetManager.store('tilable-IMG_0044-grey1.png', __webpack_require__(/*! ./assets/tileset/grass/tilable-IMG_0044-grey1.png */ "./assets/tileset/grass/tilable-IMG_0044-grey1.png"));
-    AssetManager.store('tilable-IMG_0044-lush.png', __webpack_require__(/*! ./assets/tileset/grass/tilable-IMG_0044-lush.png */ "./assets/tileset/grass/tilable-IMG_0044-lush.png"));
-    AssetManager.store('tilable-IMG_0044-verydark.png', __webpack_require__(/*! ./assets/tileset/grass/tilable-IMG_0044-verydark.png */ "./assets/tileset/grass/tilable-IMG_0044-verydark.png"));
-    AssetManager.store('tilable-IMG_0044.png', __webpack_require__(/*! ./assets/tileset/grass/tilable-IMG_0044.png */ "./assets/tileset/grass/tilable-IMG_0044.png"));
-    AssetManager.store('tilable-IMG_0044_nm.png', __webpack_require__(/*! ./assets/tileset/grass/tilable-IMG_0044_nm.png */ "./assets/tileset/grass/tilable-IMG_0044_nm.png"));
+    AssetManager.store('tilable-IMG_0044-dark.png', __webpack_require__(/*! ./assets/tileset/grass/tilable-IMG_0044-dark.png */ "./assets/tileset/grass/tilable-IMG_0044-dark.png"), { tileset: 'grass' });
+    AssetManager.store('tilable-IMG_0044-grey.png', __webpack_require__(/*! ./assets/tileset/grass/tilable-IMG_0044-grey.png */ "./assets/tileset/grass/tilable-IMG_0044-grey.png"), { tileset: 'grass' });
+    AssetManager.store('tilable-IMG_0044-grey1.png', __webpack_require__(/*! ./assets/tileset/grass/tilable-IMG_0044-grey1.png */ "./assets/tileset/grass/tilable-IMG_0044-grey1.png"), { tileset: 'grass' });
+    AssetManager.store('tilable-IMG_0044-lush.png', __webpack_require__(/*! ./assets/tileset/grass/tilable-IMG_0044-lush.png */ "./assets/tileset/grass/tilable-IMG_0044-lush.png"), { tileset: 'grass' });
+    AssetManager.store('tilable-IMG_0044-verydark.png', __webpack_require__(/*! ./assets/tileset/grass/tilable-IMG_0044-verydark.png */ "./assets/tileset/grass/tilable-IMG_0044-verydark.png"), { tileset: 'grass' });
+    AssetManager.store('tilable-IMG_0044.png', __webpack_require__(/*! ./assets/tileset/grass/tilable-IMG_0044.png */ "./assets/tileset/grass/tilable-IMG_0044.png"), { tileset: 'grass' });
+    AssetManager.store('tilable-IMG_0044_nm.png', __webpack_require__(/*! ./assets/tileset/grass/tilable-IMG_0044_nm.png */ "./assets/tileset/grass/tilable-IMG_0044_nm.png"), { tileset: 'grass' });
 
 };
 
@@ -538,26 +538,26 @@ module.exports = GameDong => {
 module.exports = (GameDong) => {
     const AssetManager = GameDong.AssetManager;
     const prefix = '/home/quentin/dev/gamedong/gamedong-engine/assets/tileset/sample-1';
-    AssetManager.store('barrel32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/barrel32x32transparent.png */ "./assets/tileset/sample-1/barrel32x32transparent.png"));
-    AssetManager.store('bush32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/bush32x32transparent.png */ "./assets/tileset/sample-1/bush32x32transparent.png"));
-    AssetManager.store('fence32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/fence32x32transparent.png */ "./assets/tileset/sample-1/fence32x32transparent.png"));
-    AssetManager.store('flower32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/flower32x32transparent.png */ "./assets/tileset/sample-1/flower32x32transparent.png"));
-    AssetManager.store('grassa32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/grassa32x32transparent.png */ "./assets/tileset/sample-1/grassa32x32transparent.png"));
-    AssetManager.store('grassb32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/grassb32x32transparent.png */ "./assets/tileset/sample-1/grassb32x32transparent.png"));
-    AssetManager.store('grassc32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/grassc32x32transparent.png */ "./assets/tileset/sample-1/grassc32x32transparent.png"));
-    AssetManager.store('grassd32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/grassd32x32transparent.png */ "./assets/tileset/sample-1/grassd32x32transparent.png"));
-    AssetManager.store('grasse32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/grasse32x32transparent.png */ "./assets/tileset/sample-1/grasse32x32transparent.png"));
-    AssetManager.store('grassf32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/grassf32x32transparent.png */ "./assets/tileset/sample-1/grassf32x32transparent.png"));
-    AssetManager.store('grassg32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/grassg32x32transparent.png */ "./assets/tileset/sample-1/grassg32x32transparent.png"));
-    AssetManager.store('grassh32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/grassh32x32transparent.png */ "./assets/tileset/sample-1/grassh32x32transparent.png"));
-    AssetManager.store('grassi32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/grassi32x32transparent.png */ "./assets/tileset/sample-1/grassi32x32transparent.png"));
-    AssetManager.store('patch32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/patch32x32transparent.png */ "./assets/tileset/sample-1/patch32x32transparent.png"));
-    AssetManager.store('roadbottom32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/roadbottom32x32transparent.png */ "./assets/tileset/sample-1/roadbottom32x32transparent.png"));
-    AssetManager.store('roadmiddle32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/roadmiddle32x32transparent.png */ "./assets/tileset/sample-1/roadmiddle32x32transparent.png"));
-    AssetManager.store('roadtop32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/roadtop32x32transparent.png */ "./assets/tileset/sample-1/roadtop32x32transparent.png"));
-    AssetManager.store('rock32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/rock32x32transparent.png */ "./assets/tileset/sample-1/rock32x32transparent.png"));
-    AssetManager.store('signpost32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/signpost32x32transparent.png */ "./assets/tileset/sample-1/signpost32x32transparent.png"));
-    AssetManager.store('tree96x96transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/tree96x96transparent.png */ "./assets/tileset/sample-1/tree96x96transparent.png"));
+    AssetManager.store('barrel32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/barrel32x32transparent.png */ "./assets/tileset/sample-1/barrel32x32transparent.png"), { tileset: 'sample-1' });
+    AssetManager.store('bush32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/bush32x32transparent.png */ "./assets/tileset/sample-1/bush32x32transparent.png"), { tileset: 'sample-1' });
+    AssetManager.store('fence32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/fence32x32transparent.png */ "./assets/tileset/sample-1/fence32x32transparent.png"), { tileset: 'sample-1' });
+    AssetManager.store('flower32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/flower32x32transparent.png */ "./assets/tileset/sample-1/flower32x32transparent.png"), { tileset: 'sample-1' });
+    AssetManager.store('grassa32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/grassa32x32transparent.png */ "./assets/tileset/sample-1/grassa32x32transparent.png"), { tileset: 'sample-1' });
+    AssetManager.store('grassb32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/grassb32x32transparent.png */ "./assets/tileset/sample-1/grassb32x32transparent.png"), { tileset: 'sample-1' });
+    AssetManager.store('grassc32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/grassc32x32transparent.png */ "./assets/tileset/sample-1/grassc32x32transparent.png"), { tileset: 'sample-1' });
+    AssetManager.store('grassd32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/grassd32x32transparent.png */ "./assets/tileset/sample-1/grassd32x32transparent.png"), { tileset: 'sample-1' });
+    AssetManager.store('grasse32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/grasse32x32transparent.png */ "./assets/tileset/sample-1/grasse32x32transparent.png"), { tileset: 'sample-1' });
+    AssetManager.store('grassf32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/grassf32x32transparent.png */ "./assets/tileset/sample-1/grassf32x32transparent.png"), { tileset: 'sample-1' });
+    AssetManager.store('grassg32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/grassg32x32transparent.png */ "./assets/tileset/sample-1/grassg32x32transparent.png"), { tileset: 'sample-1' });
+    AssetManager.store('grassh32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/grassh32x32transparent.png */ "./assets/tileset/sample-1/grassh32x32transparent.png"), { tileset: 'sample-1' });
+    AssetManager.store('grassi32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/grassi32x32transparent.png */ "./assets/tileset/sample-1/grassi32x32transparent.png"), { tileset: 'sample-1' });
+    AssetManager.store('patch32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/patch32x32transparent.png */ "./assets/tileset/sample-1/patch32x32transparent.png"), { tileset: 'sample-1' });
+    AssetManager.store('roadbottom32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/roadbottom32x32transparent.png */ "./assets/tileset/sample-1/roadbottom32x32transparent.png"), { tileset: 'sample-1' });
+    AssetManager.store('roadmiddle32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/roadmiddle32x32transparent.png */ "./assets/tileset/sample-1/roadmiddle32x32transparent.png"), { tileset: 'sample-1' });
+    AssetManager.store('roadtop32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/roadtop32x32transparent.png */ "./assets/tileset/sample-1/roadtop32x32transparent.png"), { tileset: 'sample-1' });
+    AssetManager.store('rock32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/rock32x32transparent.png */ "./assets/tileset/sample-1/rock32x32transparent.png"), { tileset: 'sample-1' });
+    AssetManager.store('signpost32x32transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/signpost32x32transparent.png */ "./assets/tileset/sample-1/signpost32x32transparent.png"), { tileset: 'sample-1' });
+    AssetManager.store('tree96x96transparent.png', __webpack_require__(/*! ./assets/tileset/sample-1/tree96x96transparent.png */ "./assets/tileset/sample-1/tree96x96transparent.png"), { tileset: 'sample-1' });
 
 };
 
@@ -1052,6 +1052,7 @@ module.exports = (app) => {
     app.AssetManager = __webpack_require__(/*! @core/assets */ "./src/core/assets/index.js");
     app.Map = __webpack_require__(/*! ../map */ "./src/map/index.js");
     app.TileMap = __webpack_require__(/*! ../map/tile-map.model */ "./src/map/tile-map.model.js");
+    app.TileSet = __webpack_require__(/*! ../tileset */ "./src/tileset/index.js");
     app.Camera = __webpack_require__(/*! ../camera */ "./src/camera/index.js");
     app.Coords = __webpack_require__(/*! @core/coords */ "./src/core/coords/index.js");
     app.ViewPort = __webpack_require__(/*! @core/viewport */ "./src/core/viewport/index.js");
@@ -1215,14 +1216,78 @@ const GameElement = __webpack_require__(/*! @core/game-element */ "./src/core/ga
 class AssetManager {
     constructor() {
         this.ressources = {};
+        this.ressourcesDetails = {};
+        this.index = {};
     }
 
-    store(name, data) {
+    store(name, data, details = null) {
         this.ressources[name] = data;
+        
+        if (details === null) {
+            this.ressourcesDetails[name] = { name : name };
+        }
+
+        else {
+            details.name = name;
+            this.ressourcesDetails[name] = details;
+        }
+        
+    }
+
+    setDetails(ressourceName, details) {
+        this.ressourcesDetails[ressourceName] = details;
     }
 
     get(name) {
         return this.ressources[name];
+    }
+
+    find(selectors) {
+        const ressourcesName = Object.keys(this.ressources);
+
+        const filteredRessources = ressourcesName.filter(name => {
+            const details = this.ressourcesDetails[name];
+            Object.keys(selectors).forEach(attributeName => {
+                const attributeValue = selectors[attributeName];
+                if (details[attributeName] !== attributeValue) {
+                    return false;
+                }
+            });
+
+            return true;
+        });
+    
+        return filteredRessources.map(name => {
+            return {
+                name: name,
+                value: this.ressources[name],
+                details: this.ressourcesDetails[name]
+            };
+        })
+    }
+
+    createIndex(name, content = {}) {
+        if (typeof this.index[name] !== 'undefined') {
+            throw new Error(`Cannot create an index twice (${name})`);
+        }
+
+        else {
+            this.index[name] = content;
+        }
+    }
+
+    addToIndex(name, key, value) {
+        if (typeof this.index[name] === 'undefined') {
+            throw new Error(`Index not found (${name})`);
+        }
+
+        else {
+            this.index[name][key] = value;
+        }
+    }
+
+    toImage(ressource) {
+        return this.getImage(ressource.name);
     }
 
     getImage(imageName) {
@@ -2544,6 +2609,155 @@ class TileMap extends Map {
 }
 
 module.exports = TileMap;
+
+/***/ }),
+
+/***/ "./src/tileset/Tile.model.js":
+/*!***********************************!*\
+  !*** ./src/tileset/Tile.model.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+class Tile {
+    constructor(settings = {}) {
+        this.src = settings.value;
+        this.name = settings.name;
+        this.setImg(settings.img);
+
+        this.details = settings.details
+
+    }
+
+    setImg(img = new Image()) {
+        this.img = img;
+        this.loaded = img.height !== 0;
+    }
+
+    isLoaded() {
+        return this.loaded;
+    }
+
+    load() {
+        return new Promise(resolve => {
+            const img = new Image();
+            img.onload = () => {
+                this.setImg(img);
+                this.img = img;
+                resolve(img);
+            };
+
+            img.src = this.src;
+            img.name = this.name;
+        });
+    }
+
+    setDetails(details) {
+        this.details = details;
+    }
+}
+
+module.exports = Tile;
+
+/***/ }),
+
+/***/ "./src/tileset/Tileset.config.js":
+/*!***************************************!*\
+  !*** ./src/tileset/Tileset.config.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {
+    defaultName: 'Untitled tileset'
+};
+
+/***/ }),
+
+/***/ "./src/tileset/Tileset.model.js":
+/*!**************************************!*\
+  !*** ./src/tileset/Tileset.model.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const defaults = __webpack_require__(/*! ./Tileset.config */ "./src/tileset/Tileset.config.js");
+const Entity = __webpack_require__(/*! @core/entity */ "./src/core/entity/index.js");
+const Tile = __webpack_require__(/*! ./Tile.model */ "./src/tileset/Tile.model.js");
+
+class Tileset extends Entity {
+    constructor(settings = {}) {
+        super(settings);
+
+        this.setName(settings.name);
+        this.tiles = null; 
+        this.assetManager = settings.assetManager;
+
+        this.index = settings.index || null;
+        this.retrieveTiles();
+    }
+
+    retrieveTiles() {
+        let ressources;
+
+        if (this.index === null) {
+            ressources = this.assetManager.find({
+                tileset: this.name
+            });
+        }
+
+        else {
+            ressources = this.assetManager.index[this.index];
+        }
+       
+        console.table(ressources);
+        this.tiles = ressources.map(ressource => {
+            return new Tile(ressource);
+        });
+    }
+
+    loadTiles() {
+        return this.tiles.filter(tile => {
+            console.log(tile);
+            return tile.isLoaded() === false;
+        }).map(tile => {
+            tile.load();
+        });
+    }
+
+    getTile(name) {
+        return this.tiles[name];
+    }
+
+    setName(name) {
+        this.name = name || defaults.name;
+    }
+
+    exports() {
+        // todo
+    }
+
+    import() {
+        // todo
+    }
+
+    getTiles() {
+        return Object.values(this.tiles);
+    }
+}
+
+module.exports = Tileset;
+
+/***/ }),
+
+/***/ "./src/tileset/index.js":
+/*!******************************!*\
+  !*** ./src/tileset/index.js ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! ./Tileset.model */ "./src/tileset/Tileset.model.js");
 
 /***/ })
 

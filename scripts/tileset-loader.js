@@ -25,7 +25,7 @@ fs.readdir(tileset_path, (err, files) => {
         //console.table(files);
         files.forEach(file => {
             // stream.write(`    AssetManager.store('${file}', require(prefix + '/${file}'));\n`);
-            stream.write(`    AssetManager.store('${file}', require('${tileset_path}/${file}'));\n`);
+            stream.write(`    AssetManager.store('${file}', require('${tileset_path}/${file}'), { tileset: '${tileset_name}' });\n`);
         });
 
         stream.write(`
