@@ -29,8 +29,6 @@ class Camera extends GameElement {
         // const vh = size.height;
 
         const position = this.getPosition();
-        console.log('position de la caméra')
-        console.table(position)
         const pos_x = position.x;
         const pos_y = position.y;
         const nbRows = this.data.scene.getNbRows();
@@ -59,28 +57,15 @@ class Camera extends GameElement {
         // data.x is a normalized position into map
         // we want to transform theses coordinates in 0..1 coordinates in camera grid
         renderingData.forEach((data, index) => {
-            // const x = Math.round(((data.x - x0) / (xn - x0)) * rx);
-            // const y = Math.round(((data.y - y0) / (yn - y0)) * rx);
             const x = Math.round((((data.x - x0) * 100) / (2 * delta)) * rx) / 100;
             const y = Math.round((((data.y - y0) * 100) / (2 * delta)) * rx) / 100;
             const w = Math.round((((data.width)  * 100) / (delta * 2)) * rx) / 100;
             const h = Math.round((((data.height) * 100) / (delta * 2)) * rx) / 100;
-
-            // for (let i = 0; i < width; i++) {
-            //     for (let j = 0; j < height; j++) {
-            //         context.fillText(`(${i}, ${j})`, i, j);
-            //     }    
-            // }
-
-            // context.fillText(`(${x}, ${y})`, x + w, y + h);
            
             data.gameElement.render(
                 context, 
                 x, y, w, h
-            )
-
-            // context.fillText(`(${x}, ${y})`, x, y + 10);
-            // context.fillText(`(${data.x}, ${data.y})`, x, y + 20);
+            );
         });
     }
 

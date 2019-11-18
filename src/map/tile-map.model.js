@@ -30,9 +30,22 @@ class TileMap extends Map {
         );
     }
 
+    getTile(x, y, z = 0) {
+        const layer = this.layers;
+        if (
+            typeof layer[z] !== 'undefined' &&
+            typeof layer[z][x] !== 'undefined'
+        ) {
+            return this.layers[z][x][y];
+        }
+
+        else {
+            return undefined;
+        }
+    }
+
+    
     getRenderingData(x_min = 0, y_min = 0, z_min = 0, x_max = this.getNbColumns(), y_max = this.getNbRows(), z_max = 10) {
-        console.log('get rendering data')
-        console.table({x_min, y_min, x_max, y_max});
         let layer, column = null;
         let renderingData = [];
         let x, y, z;
@@ -73,6 +86,7 @@ class TileMap extends Map {
     getNbColumns() {
         return this.data.nbColumns;
     }
+
     viewPortCellCoordsToMapCellCoords(viewportCellCoords) {
         const x = Math.floor(viewportCellCoords.x * this.getNbRows());
         const y = Math.floor(viewportCellCoords.y * this.getNbColumns());

@@ -50,7 +50,6 @@ class GameElement extends Entity {
         const p = d.position;
         const s = d.size;
         
-        console.log(typeof x);
         if (typeof x !== 'number') {
             x = p.x;
         }

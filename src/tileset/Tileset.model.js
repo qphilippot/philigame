@@ -35,7 +35,6 @@ class Tileset extends Entity {
 
     loadTiles() {
         return this.tiles.filter(tile => {
-            console.log(tile);
             return tile.isLoaded() === false;
         }).map(tile => {
             tile.load();
