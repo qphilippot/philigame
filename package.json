@@ -18,12 +18,12 @@
   ],
   "author": "GameDong",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/gamedong/gamedong-engine#readme",
-  "dependencies": {
-    "webpack": "^4.35.3",
-    "webpack-cli": "^3.3.5"
-  },
+  "homepage": "https://github.com/qphilippot/gamedong#readme",
+  "dependencies": {  },
+
   "devDependencies": {
+    "webpack": "^4.35.3",
+    "webpack-cli": "^3.3.5",
     "clean-webpack-plugin": "^3.0.0",
     "file-loader": "^4.1.0",
     "html-webpack-plugin": "^3.2.0"
