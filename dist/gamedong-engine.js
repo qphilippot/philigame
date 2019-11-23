@@ -1,4 +1,14 @@
-/******/ (function(modules) { // webpackBootstrap
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define("GameDong", [], factory);
+	else if(typeof exports === 'object')
+		exports["GameDong"] = factory();
+	else
+		root["GameDong"] = factory();
+})(window, function() {
+return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -2298,4 +2308,5 @@ module.exports = __webpack_require__(/*! ./Tileset.model */ "./src/tileset/Tiles
 /***/ })
 
 /******/ });
+});
 //# sourceMappingURL=gamedong-engine.js.map

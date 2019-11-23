@@ -18,6 +18,9 @@ module.exports = {
   output: {
     path: path.resolve('./dist'),
     filename: "gamedong-engine.js",
+    library: 'GameDong',
+    libraryTarget: 'umd',
+    umdNamedDefine: true  ,
     chunkFilename: '[name].js'
   },
 
