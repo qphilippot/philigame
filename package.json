@@ -1,8 +1,9 @@
 {
   "name": "gamedong-engine",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "JS game engine made with love by GameDong",
-  "main": "index.js",
+  "main": "dist/gamedong-engine.js",
+
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack"
