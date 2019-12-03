@@ -15,6 +15,21 @@
     <script>
       var page = {};
         document.addEventListener('DOMContentLoaded', function() {
+          /*class CustomMouseController extends GameDong.MouseController {
+            constructor(settings) {
+              super(settings);
+            }
+
+            onMouseMove(event) {
+                console.log('mouse move', event);
+            }
+        
+            onLeftClick(event) {
+                console.log('mouse left click', event);
+            }
+          };
+          */
+
           page.viewport = new GameDong.ViewPort({
             container: 'gd-main-viewport',
             size: {

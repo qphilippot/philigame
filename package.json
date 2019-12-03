@@ -1,6 +1,6 @@
 {
   "name": "gamedong-engine",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "JS game engine made with love by GameDong",
   "main": "dist/gamedong-engine.js",
 

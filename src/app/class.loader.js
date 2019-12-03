@@ -7,4 +7,5 @@ module.exports = (app) => {
     app.Coords = require('@core/coords');
     app.ViewPort = require('@core/viewport');
     app.GameElement = require('@core/game-element');
+    app.MouseController = require('@core/controllers/mouse.controller');
 };

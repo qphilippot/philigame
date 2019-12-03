@@ -606,6 +606,7 @@ module.exports = (app) => {
     app.Coords = __webpack_require__(/*! @core/coords */ "./src/core/coords/index.js");
     app.ViewPort = __webpack_require__(/*! @core/viewport */ "./src/core/viewport/index.js");
     app.GameElement = __webpack_require__(/*! @core/game-element */ "./src/core/game-element/index.js");
+    app.MouseController = __webpack_require__(/*! @core/controllers/mouse.controller */ "./src/core/controllers/mouse.controller.js");
 };
 
 
@@ -1372,10 +1373,10 @@ class Entity {
         }
     }
 
-    doAsync(task) {
+    doAsync(task, delay = 1) {
         setTimeout(() => {
             task();
-        }, 1);
+        }, delay);
     }
 
     // async waitingFor(promisesArray) {
@@ -1870,6 +1871,7 @@ class ViewPortMouseController extends MouseController {
     }
 
     onMouseMove(event) {
+        // not used in game engine, maybe should i remove notification system ?
         const pixelCoords = this.component.getPixelsCoordsFromPageCoords(event);
         const cellCoords = this.component.getCellCoordsFromPixelCoords(pixelCoords);
         const p = this.component.getNormalizedPosition(event);

@@ -190,10 +190,10 @@ class Entity {
         }
     }
 
-    doAsync(task) {
+    doAsync(task, delay = 1) {
         setTimeout(() => {
             task();
-        }, 1);
+        }, delay);
     }
 
     // async waitingFor(promisesArray) {
