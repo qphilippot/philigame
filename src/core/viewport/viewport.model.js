@@ -4,6 +4,7 @@ const MouseController = require('./viewport.mouse.controller');
 class ViewPort extends Entity {
     constructor(settings = {}) {
         super(settings);
+        
         this.ui.layout = document.createElement('canvas');
 
         this.initViewPort(settings);
@@ -26,22 +27,34 @@ class ViewPort extends Entity {
         return this.ui.layout.context;
     }
 
-    initControllers() {
+    initControllers(settings) {
         this.controllers = {};
 
-        this.initMouseController();
+        
+
+        this.initMouseController(settings);
     }
 
-    initMouseController() {
-        this.controllers.mouse = new MouseController({
+    initMouseController(settings = {}) {
+        let Model = MouseController;
+
+        if (typeof settings.MouseController === 'function') {
+            Model = settings.MouseController;
+        }
+
+        this.setMouseController(new Model({
             component: this
-        });
+        }));
     }
 
-    setupViewPortListeners() {
+    setMouseController(handler) {
+        this.controllers.mouse = handler
+    }
+
+    setupViewPortListeners(settings) {
         const layout = this.ui.layout;
 
-        this.initControllers();
+        this.initControllers(settings);
         layout.addEventListener('mousemove', (event) => {
             this.controllers.mouse.onMouseMove(event);
         });
@@ -127,7 +140,7 @@ class ViewPort extends Entity {
         }
         
     
-        this.setupViewPortListeners();
+        this.setupViewPortListeners(settings);
         this.ui.container = container;
         container.appendChild(layout);
     }

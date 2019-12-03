@@ -146,13 +146,13 @@ class Entity {
 
     emit(eventName, data) {
         const target = data.target || window;
-        const envent = this.createCustomEvent(eventName, data);
+        const event = this.createCustomEvent(eventName, data);
         target.dispatchEvent(event);
-        // this.event.emit(eventName, data);
     }
 
     listen(eventName, handler) {
-        this.addEventListener(eventName, handler);
+        console.log('listen');
+        window.addEventListener(eventName, handler);
 
         this.listeners = [{
             eventName: eventName,

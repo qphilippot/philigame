@@ -110,12 +110,34 @@
             }
         }
 
-        page.viewport = new GameDong.ViewPort({
-        container: 'gd-main-viewport',
-        size: {
-            width: 500,
-            height: 500
+        class MyController extends GameDong.MouseController {
+            constructor(settings) {
+                super(settings);
+            }
+
+            onMouseMove(event) {
+                console.log('mwahahha, i am an overrided method !');
+            }
         }
+
+        page.viewport = new GameDong.ViewPort({
+            container: 'gd-main-viewport',
+            size: {
+                width: 500,
+                height: 500
+            },
+
+            MouseController: MyController
+        });
+
+        page.viewport.listen('message', event => {
+            console.log('new message', event.detail.content);
+        });
+
+        page.viewport.emit('message', {
+            detail: {
+                content: 'hello dude !'
+            }
         });
 
         page.map = new GameDong.TileMap({
