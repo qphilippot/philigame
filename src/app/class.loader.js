@@ -8,4 +8,5 @@ module.exports = (app) => {
     app.ViewPort = require('@core/viewport');
     app.GameElement = require('@core/game-element');
     app.MouseController = require('@core/controllers/mouse.controller');
+    app.Canvas = require('@core/canvas');
 };

@@ -151,7 +151,6 @@ class Entity {
     }
 
     listen(eventName, handler) {
-        console.log('listen');
         window.addEventListener(eventName, handler);
 
         this.listeners = [{

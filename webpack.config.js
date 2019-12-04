@@ -10,7 +10,7 @@ module.exports = {
     // new CleanWebpackPlugin(['dist/*']) for < v2 versions of CleanWebpackPlugin
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
-      template: './assets/lifegame.html'
+      template: './assets/map.html'
     })
   ],
 
