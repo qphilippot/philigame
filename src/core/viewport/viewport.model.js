@@ -67,6 +67,25 @@ class ViewPort extends Entity {
         });
     }
 
+    addLayer(name) {
+        const main = this.layers.main; 
+        
+        const layer = new Canvas({
+            name: name,
+            container: main.container,
+            size: main.size,
+            resolution: main.resolution
+        });
+
+        layer
+            .disableEvent()
+            .addClass('gd-viewport')
+            .setBackground('none')
+        ;
+
+        this.layers[name] = layer;
+    }
+
     clear(layer) {
         if (typeof layer === 'string') {
             this.layers[layer].clear();
@@ -79,7 +98,8 @@ class ViewPort extends Entity {
         }
     }
     
-    init_ViewPort(settings) {
+    init_ViewPort(settings = {}) {
+        settings.name = 'main';
         const main = new Canvas(settings);
         main.addClass('gd-viewport');
 
@@ -88,6 +108,7 @@ class ViewPort extends Entity {
         // );
         
         this.layers = { main };
+        this.addLayer('ui');
 
         this.setupViewPortListeners(settings);
     }

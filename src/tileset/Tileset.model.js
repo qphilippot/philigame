@@ -27,7 +27,6 @@ class Tileset extends Entity {
             ressources = this.assetManager.index[this.index];
         }
        
-        console.table(ressources);
         this.tiles = ressources.map(ressource => {
             return new Tile(ressource);
         });

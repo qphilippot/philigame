@@ -2,11 +2,14 @@ class Canvas {
     constructor(settings = {}) {
         this.node = this.getNode(settings);
         this.context = this.node.getContext('2d');
-
         this.init_Size(settings);
         this.init_Resolution(settings);
         this.init_Ratio();
        
+        if (settings.name) {
+            this.setName(settings.name);
+        }
+
         this.container = this.getContainer(settings);
         
         if (this.container === null) {
@@ -20,6 +23,11 @@ class Canvas {
         else {
             this.container.appendChild(this.node);
         }
+    }
+
+    setName(name) {
+        this.name = name;
+        this.node.setAttribute('data-name', name);
     }
 
     setContainer(container) {
@@ -59,12 +67,13 @@ class Canvas {
     }
 
     getContainer(settings) {
-        const type = typeof settings.container;     
+        const type = typeof settings.container;   
+  
         if (type === 'string') {
             return document.getElementById(settings.container);
         }
 
-        else if (typeof type === 'object') {
+        else if (type === 'object') {
             return settings.container;
         }
 
@@ -73,6 +82,20 @@ class Canvas {
         }   
     }
     
+    setBackground(color) {
+        this.node.style.background = color;
+        return this;
+    }
+
+    disableEvent() {
+        this.node.style.pointerEvents = 'none';
+        return this;
+    }
+
+    enableEvent() {
+        this.node.style.pointerEvents = 'auto';
+        return this;
+    }
 
     init_Size(settings) {
         this.size = {};
