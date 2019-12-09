@@ -123,6 +123,8 @@ class ViewPort extends Entity {
         Object.values(this.layers).forEach(
             layer => layer.setSize(width, height, refreshRatio)
         );
+
+        this.layers.main.container.style.width = width + 'px';   
     }
 
     getPixelsCoordsFromPageCoords(coords) {
