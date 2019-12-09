@@ -108,6 +108,8 @@ class ViewPort extends Entity {
         // );
         
         this.layers = { main };
+        this.shrinkContainer();
+
         this.addLayer('ui');
 
         this.setupViewPortListeners(settings);
@@ -119,12 +121,20 @@ class ViewPort extends Entity {
         );
     }
 
+    shrinkContainer() {
+        this.layers.main.container.style.width = this.layers.main.getWidth() + 'px';
+    }
+    
     setSize(width, height, refreshRatio = true) {
         Object.values(this.layers).forEach(
             layer => layer.setSize(width, height, refreshRatio)
         );
 
-        this.layers.main.container.style.width = width + 'px';   
+        this.shrinkContainer();
+        
+        if (refreshRatio === true) {
+            this.setResolution(width, height)
+        } 
     }
 
     getPixelsCoordsFromPageCoords(coords) {
