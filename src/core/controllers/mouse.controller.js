@@ -41,7 +41,14 @@ class MouseController extends Entity {
         }
     }
 
+    onMouseOut() {
 
+    }
+
+    onMouseEnter() {
+
+    }
+    
     static isLeftClick(event) {
         // https://stackoverflow.com/questions/3944122/detect-left-mouse-button-press
         event = event || window.event;

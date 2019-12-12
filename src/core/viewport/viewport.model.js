@@ -65,6 +65,14 @@ class ViewPort extends Entity {
         mainLayer.addEventListener('mousedown', (event) => {
            this.controllers.mouse.onMouseDown(event);
         });
+
+        mainLayer.addEventListener('mouseout', event => {
+            this.controllers.mouse.onMouseOut(event);
+        });
+
+        mainLayer.addEventListener('mouseenter', event => {
+            this.controllers.mouse.onMouseEnter(event);
+        });
     }
 
     addLayer(name) {

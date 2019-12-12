@@ -1287,7 +1287,14 @@ class MouseController extends Entity {
         }
     }
 
+    onMouseOut() {
 
+    }
+
+    onMouseEnter() {
+
+    }
+    
     static isLeftClick(event) {
         // https://stackoverflow.com/questions/3944122/detect-left-mouse-button-press
         event = event || window.event;
@@ -1990,6 +1997,14 @@ class ViewPort extends Entity {
 
         mainLayer.addEventListener('mousedown', (event) => {
            this.controllers.mouse.onMouseDown(event);
+        });
+
+        mainLayer.addEventListener('mouseout', event => {
+            this.controllers.mouse.onMouseOut(event);
+        });
+
+        mainLayer.addEventListener('mouseenter', event => {
+            this.controllers.mouse.onMouseEnter(event);
         });
     }
 
