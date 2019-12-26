@@ -16,7 +16,7 @@ class Entity {
         this.skills       = {};
         this.data         = {};
         this.ui           = {};
-        this.subscribers  = new Set();
+        this.subscriptions  = {};
 
         this.services = settings.services;
         this.strictMode = settings.strictMode;
@@ -39,24 +39,68 @@ class Entity {
 
     
 
-    sendNotification(name, data) {
-        this.subscribers.forEach(subscriber => {
-            const notification = Notification.POOL.getOne(name, data);
-            subscriber.onNewNotification(notification)
-        });
+    sendNotificationToSubscribers(subscribers, name, data) {
+        if (
+            typeof subscribers !== 'undefined' && 
+            typeof subscribers.forEach === 'function'
+        ) {
+            subscribers.forEach(record => {
+                const notification = Notification.POOL.getOne(name, data, this);
+
+                if (typeof record.callback === 'Promise') {
+                    record.callback(notification).then(
+                        () => {
+                            notification.recycle();
+                        },
+
+                        () => {
+                            notification.recycle();
+                        }
+                    );
+                }
+
+                else {
+                    record.callback(notification);
+                    notification.recycle();
+                }
+            
+            });
+        }
+    }
+
+    notify(name, data = {}) {
+        this.sendNotificationToSubscribers(this.subscriptions[name], name, data);
+        this.sendNotificationToSubscribers(this.subscriptions.all, name, data);  
     }
 
     getData(propertyName) {
         return this.data[propertyName];
     }
 
-    subscribe(observable) {
-        observable.register(this);
-        // record all subscribed ?
+    subscribeTo(observable, eventName = 'all', callback = null) {
+        if (callback === null) {
+            callback = this.onNewNotification.bind(this);
+        }
+
+        observable.register(this, eventName, callback);
     }
 
-    register(subscriber) {
-        this.subscribers.add(subscriber);
+    // subscribe(observable) {
+    //     observable.register(this);
+    //     // record all subscribed ?
+    // }
+
+    register(subscriber, eventName, callback) {
+        let subscription = this.subscriptions[eventName];
+        if (typeof subscription !== Set) {
+            subscription = new Set();
+            this.subscriptions[eventName] = subscription;
+        }
+
+        subscription.add({
+            subscriber, 
+            callback
+        });
     }
 
     onNewNotification(notification) {

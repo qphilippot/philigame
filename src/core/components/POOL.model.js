@@ -6,6 +6,7 @@ class POOL {
         const capacity = settings.capacity || 10;
         this.data = new Array(capacity);
         this.index = capacity -1;
+        
 
         this.initPool();
     }

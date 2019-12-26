@@ -77,7 +77,11 @@
               }
             });
             
-            
+            page.camera.subscribeTo(page.viewport, 'updateCoords', notification => {
+              console.log('got notification !', notification.data);
+              console.table(notification)
+            });
+
             page.camera.setScene(page.map);
             page.camera.snapshot(page.viewport);
             document.addEventListener('keydown', function(event) {

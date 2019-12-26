@@ -92,24 +92,6 @@ class TileMap extends Map {
         const y = Math.floor(viewportCellCoords.y * this.getNbColumns());
         return {x, y};
     }
-    
-
-    onNewNotification(notification) {
-        const notificationName = notification.name;
-
-        switch(notificationName) {
-            case 'updateCoords':
-                this.viewPortCellCoordsToMapCellCoords(notification.data);
-                break;
-            default:
-                console.log(notification);
-                break;
-        } 
-
-        // override me !
-
-        notification.recycle();
-    }
 }
 
 module.exports = TileMap;

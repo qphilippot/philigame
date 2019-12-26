@@ -9,10 +9,12 @@ class NotificationPOOL extends POOL {
         });
     }
 
-    getOne(name, data) {
+    getOne(name, data, emitter) {
         const notification = super.getOne();
         notification.setName(name);
+        notification.setEmitter(emitter);
         notification.setData(data);
+
 
         return notification;
     }

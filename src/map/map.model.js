@@ -109,21 +109,21 @@ class Map extends Entity {
     }
     
 
-    onNewNotification(notification) {
-        const notificationName = notification.name;
+    // onNewNotification(notification) {
+    //     const notificationName = notification.name;
 
-        switch(notificationName) {
-            case 'updateCoords':
-                this.viewPortCellCoordsToMapCellCoords(notification.data);
-                break;
-            default:
-                break;
-        } 
+    //     switch(notificationName) {
+    //         case 'updateCoords':
+    //             this.viewPortCellCoordsToMapCellCoords(notification.data);
+    //             break;
+    //         default:
+    //             break;
+    //     } 
 
-        // override me !
+    //     // override me !
 
-        notification.recycle();
-    }
+    //     notification.recycle();
+    // }
 }
 
 module.exports = Map;
