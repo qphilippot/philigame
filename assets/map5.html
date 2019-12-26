@@ -77,22 +77,18 @@
               }
             });
             
-            // page.camera.subscribeTo(page.viewport, 'updateCoords', notification => {
-            //   console.log('got notification !', notification.data);
-            //   console.table(notification)
-            // });
+            page.camera.subscribeTo(page.viewport, 'updateCoords', notification => {
+              console.log('got notification !', notification.data);
+              console.table(notification)
+            });
 
             page.scene = new GameDong.Scene({
               environment: page.map,
               camera: page.camera
             });
-
-            page.scene.bindTo(page.viewport);
-            // page.scene.subscribeTo(page.viewport, 'u')
-
+            
             // page.camera.setScene(page.map);
-            //page.camera.snapshot(page.viewport);
-            page.scene.render(page.viewport);
+            page.camera.snapshot(page.viewport);
             document.addEventListener('keydown', function(event) {
               var delta = {x: 0, y: 0};
               switch(event.keyCode) {
@@ -122,15 +118,14 @@
               }
 
 
-              //page.viewport.clear();
+              page.viewport.clear();
 
               console.table(delta);
               if (delta.x !== 0 || delta.y !== 0) {
 
                 page.camera.move(delta);
                 console.table(page.camera.getPosition);
-                // page.camera.snapshot(page.viewport);
-                page.scene.render(page.viewport);
+                page.camera.snapshot(page.viewport);
               }
             });
             // page.map.getRenderingData().forEach(function(data) {
@@ -147,5 +142,5 @@
         });
     </script>
 
-  <script type="text/javascript" src="gamedong-engine.js"></script></body>
+  </body>
 </html>

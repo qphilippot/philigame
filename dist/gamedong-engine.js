@@ -641,6 +641,7 @@ module.exports = (app) => {
     app.GameElement = __webpack_require__(/*! @core/game-element */ "./src/core/game-element/index.js");
     app.MouseController = __webpack_require__(/*! @core/controllers/mouse.controller */ "./src/core/controllers/mouse.controller.js");
     app.Canvas = __webpack_require__(/*! @core/canvas */ "./src/core/canvas/index.js");
+    app.Scene = __webpack_require__(/*! @core/scene */ "./src/core/scene/index.js");
 };
 
 
@@ -711,24 +712,18 @@ class Camera extends GameElement {
         return this.data.scene;
     }
 
-    snapshot(viewport) {
-        // means render
-
-        const resolution = viewport.getResolution();
-        const size = viewport.getSize();
-        const context = viewport.getContext();
-        const rx = resolution.width;
-        const ry = resolution.height;
-        // const vw = size.width;
-        // const vh = size.height;
-
+    /**
+     * Search all visibles game-element through environment according this own position and radius
+     * @param {*} environment 
+     */
+    snapshot(environment) {
         const position = this.getPosition();
         const pos_x = position.x;
         const pos_y = position.y;
-        const nbRows = this.data.scene.getNbRows();
-        const nbColumns = this.data.scene.getNbColumns();
+        const nbRows = environment.getNbRows();
+        const nbColumns = environment.getNbColumns();
         
-        const renderingData = this.data.scene.getRenderingData(
+        const renderingData = environment.getRenderingData(
             Math.round(pos_x * (nbColumns )) - this.radius,
             Math.round(pos_y * (nbRows )) - this.radius,
             0,
@@ -737,30 +732,18 @@ class Camera extends GameElement {
             10
         );
 
-
-    
         const delta = this.radius / nbColumns;      
         const x0 = Math.round((pos_x - delta) * nbColumns) / nbColumns;
         const y0 = Math.round((pos_y - delta) * nbRows) / nbRows;
 
-        const xn = Math.round((pos_x + delta) * nbColumns) / nbColumns; 
-        const yn = Math.round((pos_y + delta) * nbRows) / nbRows
-
-        context.font = '20px';
-            
-        // data.x is a normalized position into map
-        // we want to transform theses coordinates in 0..1 coordinates in camera grid
-        renderingData.forEach((data, index) => {
-            const x = Math.round((((data.x - x0) * 100) / (2 * delta)) * rx) / 100;
-            const y = Math.round((((data.y - y0) * 100) / (2 * delta)) * rx) / 100;
-            const w = Math.round((((data.width)  * 100) / (delta * 2)) * rx) / 100;
-            const h = Math.round((((data.height) * 100) / (delta * 2)) * rx) / 100;
-           
-            data.gameElement.render(
-                context, 
-                x, y, w, h
-            );
+        renderingData.forEach(data => {
+            data.x = (data.x - x0) / (2 * delta);
+            data.y = (data.y - y0) / (2 * delta);
+            data.width = data.width / (delta * 2);
+            data.height = data.height / (delta * 2);
         });
+        
+        return renderingData;
     }
 
     destroy() {
@@ -1974,6 +1957,96 @@ module.exports = Notification;
 
 /***/ }),
 
+/***/ "./src/core/scene/index.js":
+/*!*********************************!*\
+  !*** ./src/core/scene/index.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! ./scene.model */ "./src/core/scene/scene.model.js");
+
+/***/ }),
+
+/***/ "./src/core/scene/scene.model.js":
+/*!***************************************!*\
+  !*** ./src/core/scene/scene.model.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Entity = __webpack_require__(/*! ../entity */ "./src/core/entity/index.js");
+
+class Scene extends Entity {
+    constructor(settings = {}) {
+        super(settings);
+        this.init();
+        this.setEnvironment(settings.environment);
+        this.setCamera(settings.camera);
+    }
+
+    init() {
+        this.controllers = {};
+    }
+
+    setEnvironment(environment = null) {
+        this.environment = environment;
+    }
+
+    setCamera(camera = null) {
+        this.camera = camera;
+    }
+
+    bindTo(viewport) {
+        this.subscribeTo(
+            viewport, 
+            'mouse-move', 
+            this.onMouseMove.bind(this)
+        );
+    }
+
+
+    onMouseMove(notification) {
+        console.log('scene-mouse-move', notification);
+    }
+
+    render(viewport) {
+        viewport.clear();
+        
+        const renderingData = this.camera.snapshot(this.environment);
+        const context = viewport.getContext();
+        const width =  viewport.getResolution().width;
+        
+        context.font = '20px';
+            
+        // data.x is a normalized coord into environment coord system.
+        // we want to transform theses coordinates in 0..1 coordinates into viewport grid
+        renderingData.forEach(data => {
+            data.x = Math.round(data.x * width);
+            data.y = Math.round(data.y * width);
+            data.width = Math.round(data.width * width);
+            data.height = Math.round(data.height * width);
+           
+            data.gameElement.render(
+                context, 
+                data.x, 
+                data.y, 
+                data.width, 
+                data.height
+            );
+        });
+    }
+
+    unlink() {
+        // @todo
+        //this.unsubscribe()
+    }
+}
+
+module.exports =  Scene;
+
+/***/ }),
+
 /***/ "./src/core/viewport/index.js":
 /*!************************************!*\
   !*** ./src/core/viewport/index.js ***!
@@ -2178,10 +2251,8 @@ class ViewPortMouseController extends MouseController {
     }
 
     onMouseMove(event) {
-        const pixelCoords = this.component.getPixelsCoordsFromPageCoords(event);
-        const cellCoords = this.component.getCellCoordsFromPixelCoords(pixelCoords);
-        const p = this.component.getNormalizedPosition(event);
-        this.component.notify('updateCoords', p);
+        const normalizedCoords = this.component.getNormalizedPosition(event);
+        this.component.notify('mouse-move', normalizedCoords);
     }
 }
 

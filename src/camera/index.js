@@ -17,24 +17,18 @@ class Camera extends GameElement {
         return this.data.scene;
     }
 
-    snapshot(viewport) {
-        // means render
-
-        const resolution = viewport.getResolution();
-        const size = viewport.getSize();
-        const context = viewport.getContext();
-        const rx = resolution.width;
-        const ry = resolution.height;
-        // const vw = size.width;
-        // const vh = size.height;
-
+    /**
+     * Search all visibles game-element through environment according this own position and radius
+     * @param {*} environment 
+     */
+    snapshot(environment) {
         const position = this.getPosition();
         const pos_x = position.x;
         const pos_y = position.y;
-        const nbRows = this.data.scene.getNbRows();
-        const nbColumns = this.data.scene.getNbColumns();
+        const nbRows = environment.getNbRows();
+        const nbColumns = environment.getNbColumns();
         
-        const renderingData = this.data.scene.getRenderingData(
+        const renderingData = environment.getRenderingData(
             Math.round(pos_x * (nbColumns )) - this.radius,
             Math.round(pos_y * (nbRows )) - this.radius,
             0,
@@ -43,30 +37,18 @@ class Camera extends GameElement {
             10
         );
 
-
-    
         const delta = this.radius / nbColumns;      
         const x0 = Math.round((pos_x - delta) * nbColumns) / nbColumns;
         const y0 = Math.round((pos_y - delta) * nbRows) / nbRows;
 
-        const xn = Math.round((pos_x + delta) * nbColumns) / nbColumns; 
-        const yn = Math.round((pos_y + delta) * nbRows) / nbRows
-
-        context.font = '20px';
-            
-        // data.x is a normalized position into map
-        // we want to transform theses coordinates in 0..1 coordinates in camera grid
-        renderingData.forEach((data, index) => {
-            const x = Math.round((((data.x - x0) * 100) / (2 * delta)) * rx) / 100;
-            const y = Math.round((((data.y - y0) * 100) / (2 * delta)) * rx) / 100;
-            const w = Math.round((((data.width)  * 100) / (delta * 2)) * rx) / 100;
-            const h = Math.round((((data.height) * 100) / (delta * 2)) * rx) / 100;
-           
-            data.gameElement.render(
-                context, 
-                x, y, w, h
-            );
+        renderingData.forEach(data => {
+            data.x = (data.x - x0) / (2 * delta);
+            data.y = (data.y - y0) / (2 * delta);
+            data.width = data.width / (delta * 2);
+            data.height = data.height / (delta * 2);
         });
+        
+        return renderingData;
     }
 
     destroy() {

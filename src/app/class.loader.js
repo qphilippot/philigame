@@ -9,4 +9,5 @@ module.exports = (app) => {
     app.GameElement = require('@core/game-element');
     app.MouseController = require('@core/controllers/mouse.controller');
     app.Canvas = require('@core/canvas');
+    app.Scene = require('@core/scene');
 };
