@@ -746,6 +746,15 @@ class Camera extends GameElement {
         return renderingData;
     }
 
+    move(x = 0, y = 0, z = 0) {
+        const position = this.getPosition();
+        this.setPosition({
+            x: position.x + x,
+            y: position.y + y,
+            z: position.z + z
+        });
+    }
+
     destroy() {
         // this.data.coords.recycle();
     }
@@ -1976,6 +1985,7 @@ module.exports = __webpack_require__(/*! ./scene.model */ "./src/core/scene/scen
 /***/ (function(module, exports, __webpack_require__) {
 
 const Entity = __webpack_require__(/*! ../entity */ "./src/core/entity/index.js");
+const DefaultSettings = __webpack_require__(/*! ./scene.settings */ "./src/core/scene/scene.settings.js");
 
 class Scene extends Entity {
     constructor(settings = {}) {
@@ -1994,10 +2004,15 @@ class Scene extends Entity {
     }
 
     setCamera(camera = null) {
+        if (camera === null) {
+            camera = new Ca
+        }
+
         this.camera = camera;
     }
 
     bindTo(viewport) {
+        this.viewport = viewport;
         this.subscribeTo(
             viewport, 
             'mouse-move', 
@@ -2011,6 +2026,10 @@ class Scene extends Entity {
     }
 
     render(viewport) {
+        if (typeof viewport === 'undefined') {
+            viewport = this.viewport;
+        }
+        
         viewport.clear();
         
         const renderingData = this.camera.snapshot(this.environment);
@@ -2041,9 +2060,60 @@ class Scene extends Entity {
         // @todo
         //this.unsubscribe()
     }
+
+    add(gameElement, x = 0, y = 0, z = 0) {
+        this.environment.add(gameElement, x, y, z)
+    }
+    
+    move(x, y, z) {
+        this.camera.move(x, y, z);
+    }
+
+    getEnvironment() {
+        return this.environment;
+    }
+
+    static create() {
+        return new Scene({ 
+            camera: DefaultSettings.getCamera(),
+            environment: DefaultSettings.getEnvironment()
+        });
+    }
 }
 
 module.exports =  Scene;
+
+/***/ }),
+
+/***/ "./src/core/scene/scene.settings.js":
+/*!******************************************!*\
+  !*** ./src/core/scene/scene.settings.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Camera = __webpack_require__(/*! ../../camera */ "./src/camera/index.js");
+const Map = __webpack_require__(/*! ../../map */ "./src/map/index.js");
+
+module.exports = {
+    getCamera() {
+        return new Camera({
+            radius: 5,
+            position: {
+                x: 0.5,
+                y: 0.5
+            }
+        });
+    },
+    
+    getEnvironment() {
+        return new Map({
+            name: 'map',
+            nbRows: 100,
+            nbColumns: 100
+        });
+    } 
+};
 
 /***/ }),
 

@@ -51,6 +51,15 @@ class Camera extends GameElement {
         return renderingData;
     }
 
+    move(x = 0, y = 0, z = 0) {
+        const position = this.getPosition();
+        this.setPosition({
+            x: position.x + x,
+            y: position.y + y,
+            z: position.z + z
+        });
+    }
+
     destroy() {
         // this.data.coords.recycle();
     }

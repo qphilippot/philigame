@@ -1,4 +1,5 @@
 const Entity = require('../entity');
+const DefaultSettings = require('./scene.settings');
 
 class Scene extends Entity {
     constructor(settings = {}) {
@@ -17,10 +18,15 @@ class Scene extends Entity {
     }
 
     setCamera(camera = null) {
+        if (camera === null) {
+            camera = new Ca
+        }
+
         this.camera = camera;
     }
 
     bindTo(viewport) {
+        this.viewport = viewport;
         this.subscribeTo(
             viewport, 
             'mouse-move', 
@@ -34,6 +40,10 @@ class Scene extends Entity {
     }
 
     render(viewport) {
+        if (typeof viewport === 'undefined') {
+            viewport = this.viewport;
+        }
+        
         viewport.clear();
         
         const renderingData = this.camera.snapshot(this.environment);
@@ -63,6 +73,25 @@ class Scene extends Entity {
     unlink() {
         // @todo
         //this.unsubscribe()
+    }
+
+    add(gameElement, x = 0, y = 0, z = 0) {
+        this.environment.add(gameElement, x, y, z)
+    }
+    
+    move(x, y, z) {
+        this.camera.move(x, y, z);
+    }
+
+    getEnvironment() {
+        return this.environment;
+    }
+
+    static create() {
+        return new Scene({ 
+            camera: DefaultSettings.getCamera(),
+            environment: DefaultSettings.getEnvironment()
+        });
     }
 }
 
