@@ -1996,6 +1996,9 @@ class Scene extends Entity {
     }
 
     init() {
+        this.entities = [];
+        this.capacity = 0;
+        this.nbGameElement = 0;
         this.controllers = {};
     }
 
@@ -2062,9 +2065,24 @@ class Scene extends Entity {
     }
 
     add(gameElement, x = 0, y = 0, z = 0) {
-        this.environment.add(gameElement, x, y, z)
+        this.environment.add(gameElement, x, y, z);
+
+        if (this.nbGameElement <= this.capacity) {
+            this.entities[this.nbGameElement] = gameElement;
+            this.nbGameElement++;
+        }
+
+        else {
+            this.entities.push(gameElement);
+            this.nbGameElement = this.entities.length;
+            this.capacity = this.nbGameElement;
+        }
     }
     
+    increaseCapacity(delta = 0) {
+        this.entities.length += Math.abs(delta);
+    }
+
     move(x, y, z) {
         this.camera.move(x, y, z);
     }
