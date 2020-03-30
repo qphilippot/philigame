@@ -1,4 +1,4 @@
-const Camera = require('../../camera');
+const Camera = require('../camera');
 const Map = require('../../map');
 
 module.exports = {

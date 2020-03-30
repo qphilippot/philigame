@@ -1,3 +1,9 @@
+/**
+ * What means a scene into gamedong context ?
+ * - A scene is a set of camera and environnement (logical space)
+ * - This scene need to be bind with a viewport to be rendered. But a scene may live without any viewport.
+ */
+
 const Entity = require('../entity');
 const DefaultSettings = require('./scene.settings');
 
@@ -7,6 +13,17 @@ class Scene extends Entity {
         this.init();
         this.setEnvironment(settings.environment);
         this.setCamera(settings.camera);
+    }
+
+    getDefault(attribute) {
+        const getter = DefaultSettings[`get${attribute}`]; 
+        if (typeof getter === 'function') {
+            return getter();
+        }
+
+        else {
+            return undefined;
+        }
     }
 
     init() {
@@ -22,7 +39,7 @@ class Scene extends Entity {
 
     setCamera(camera = null) {
         if (camera === null) {
-            camera = new Ca
+            camera = new (this.getDefault('Camera'))();
         }
 
         this.camera = camera;

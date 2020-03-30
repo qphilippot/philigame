@@ -1,3 +1,7 @@
+#gd-main-viewport {
+    position: relative;
+}
+
 .gd-viewport {
     background: blue;
     position: absolute;

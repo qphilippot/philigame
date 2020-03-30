@@ -635,7 +635,7 @@ module.exports = (app) => {
     app.Map = __webpack_require__(/*! ../map */ "./src/map/index.js");
     app.TileMap = __webpack_require__(/*! ../map/tile-map.model */ "./src/map/tile-map.model.js");
     app.TileSet = __webpack_require__(/*! ../tileset */ "./src/tileset/index.js");
-    app.Camera = __webpack_require__(/*! ../camera */ "./src/camera/index.js");
+    app.Camera = __webpack_require__(/*! @core/camera */ "./src/core/camera/index.js");
     app.Coords = __webpack_require__(/*! @core/coords */ "./src/core/coords/index.js");
     app.ViewPort = __webpack_require__(/*! @core/viewport */ "./src/core/viewport/index.js");
     app.GameElement = __webpack_require__(/*! @core/game-element */ "./src/core/game-element/index.js");
@@ -683,84 +683,6 @@ finally {
 }
 
 module.exports  = app;
-
-/***/ }),
-
-/***/ "./src/camera/index.js":
-/*!*****************************!*\
-  !*** ./src/camera/index.js ***!
-  \*****************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-const GameElement = __webpack_require__(/*! @core/game-element */ "./src/core/game-element/index.js");
-const Coords = __webpack_require__(/*! @core/coords */ "./src/core/coords/index.js");
-
-class Camera extends GameElement {
-    constructor(settings) {
-        super(settings);
-        
-        this.radius = settings.radius || 10;
-        // this.data.position = settings.coords || Coords._2D.getOne();
-    }
-
-    setScene(scene) {
-        this.data.scene = scene;
-    }
-
-    getScene() {
-        return this.data.scene;
-    }
-
-    /**
-     * Search all visibles game-element through environment according this own position and radius
-     * @param {*} environment 
-     */
-    snapshot(environment) {
-        const position = this.getPosition();
-        const pos_x = position.x;
-        const pos_y = position.y;
-        const nbRows = environment.getNbRows();
-        const nbColumns = environment.getNbColumns();
-        
-        const renderingData = environment.getRenderingData(
-            Math.round(pos_x * (nbColumns )) - this.radius,
-            Math.round(pos_y * (nbRows )) - this.radius,
-            0,
-            Math.round(pos_x * (nbColumns )) + this.radius,
-            Math.round(pos_y * (nbRows )) + this.radius,
-            10
-        );
-
-        const delta = this.radius / nbColumns;      
-        const x0 = Math.round((pos_x - delta) * nbColumns) / nbColumns;
-        const y0 = Math.round((pos_y - delta) * nbRows) / nbRows;
-
-        renderingData.forEach(data => {
-            data.x = (data.x - x0) / (2 * delta);
-            data.y = (data.y - y0) / (2 * delta);
-            data.width = data.width / (delta * 2);
-            data.height = data.height / (delta * 2);
-        });
-        
-        return renderingData;
-    }
-
-    move(x = 0, y = 0, z = 0) {
-        const position = this.getPosition();
-        this.setPosition({
-            x: position.x + x,
-            y: position.y + y,
-            z: position.z + z
-        });
-    }
-
-    destroy() {
-        // this.data.coords.recycle();
-    }
-}
-
-module.exports = Camera;
 
 /***/ }),
 
@@ -899,6 +821,85 @@ module.exports = AssetManager;
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(/*! ./asset.service */ "./src/core/assets/asset.service.js").getInstance();
+
+/***/ }),
+
+/***/ "./src/core/camera/index.js":
+/*!**********************************!*\
+  !*** ./src/core/camera/index.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const GameElement = __webpack_require__(/*! @core/game-element */ "./src/core/game-element/index.js");
+const Coords = __webpack_require__(/*! @core/coords */ "./src/core/coords/index.js");
+
+class Camera extends GameElement {
+    constructor(settings) {
+        super(settings);
+        
+        this.radius = settings.radius || 10;
+        // this.data.position = settings.coords || Coords._2D.getOne();
+    }
+
+    setScene(scene) {
+        this.data.scene = scene;
+    }
+
+    getScene() {
+        return this.data.scene;
+    }
+
+    /**
+     * Search all visibles game-element through environment according this own position and radius
+     * @param {*} environment 
+     */
+    snapshot(environment) {
+        const position = this.getPosition();
+        const pos_x = position.x;
+        const pos_y = position.y;
+        const nbRows = environment.getNbRows();
+        const nbColumns = environment.getNbColumns();
+        
+        const renderingData = environment.getRenderingData(
+            Math.round(pos_x * (nbColumns )) - this.radius,
+            Math.round(pos_y * (nbRows )) - this.radius,
+            0,
+            Math.round(pos_x * (nbColumns )) + this.radius,
+            Math.round(pos_y * (nbRows )) + this.radius,
+            10
+        );
+
+        const delta = this.radius / nbColumns;      
+        const x0 = Math.round((pos_x - delta) * nbColumns) / nbColumns;
+        const y0 = Math.round((pos_y - delta) * nbRows) / nbRows;
+
+        // apply zoom deformation
+        renderingData.forEach(data => {
+            data.x = (data.x - x0) / (2 * delta);
+            data.y = (data.y - y0) / (2 * delta);
+            data.width = data.width / (delta * 2);
+            data.height = data.height / (delta * 2);
+        });
+        
+        return renderingData;
+    }
+
+    move(x = 0, y = 0, z = 0) {
+        const position = this.getPosition();
+        this.setPosition({
+            x: position.x + x,
+            y: position.y + y,
+            z: position.z + z
+        });
+    }
+
+    destroy() {
+        // this.data.coords.recycle();
+    }
+}
+
+module.exports = Camera;
 
 /***/ }),
 
@@ -1984,6 +1985,12 @@ module.exports = __webpack_require__(/*! ./scene.model */ "./src/core/scene/scen
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+/**
+ * What means a scene into gamedong context ?
+ * - A scene is a set of camera and environnement (logical space)
+ * - This scene need to be bind with a viewport to be rendered. But a scene may live without any viewport.
+ */
+
 const Entity = __webpack_require__(/*! ../entity */ "./src/core/entity/index.js");
 const DefaultSettings = __webpack_require__(/*! ./scene.settings */ "./src/core/scene/scene.settings.js");
 
@@ -1993,6 +2000,17 @@ class Scene extends Entity {
         this.init();
         this.setEnvironment(settings.environment);
         this.setCamera(settings.camera);
+    }
+
+    getDefault(attribute) {
+        const getter = DefaultSettings[`get${attribute}`]; 
+        if (typeof getter === 'function') {
+            return getter();
+        }
+
+        else {
+            return undefined;
+        }
     }
 
     init() {
@@ -2008,7 +2026,7 @@ class Scene extends Entity {
 
     setCamera(camera = null) {
         if (camera === null) {
-            camera = new Ca
+            camera = new (this.getDefault('Camera'))();
         }
 
         this.camera = camera;
@@ -2110,7 +2128,7 @@ module.exports =  Scene;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const Camera = __webpack_require__(/*! ../../camera */ "./src/camera/index.js");
+const Camera = __webpack_require__(/*! ../camera */ "./src/core/camera/index.js");
 const Map = __webpack_require__(/*! ../../map */ "./src/map/index.js");
 
 module.exports = {
