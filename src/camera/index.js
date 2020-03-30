@@ -41,6 +41,7 @@ class Camera extends GameElement {
         const x0 = Math.round((pos_x - delta) * nbColumns) / nbColumns;
         const y0 = Math.round((pos_y - delta) * nbRows) / nbRows;
 
+        // apply zoom deformation
         renderingData.forEach(data => {
             data.x = (data.x - x0) / (2 * delta);
             data.y = (data.y - y0) / (2 * delta);
