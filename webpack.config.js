@@ -8,9 +8,11 @@ module.exports = {
 
   plugins: [
     // new CleanWebpackPlugin(['dist/*']) for < v2 versions of CleanWebpackPlugin
-    new CleanWebpackPlugin(),
+    // new CleanWebpackPlugin(),
+    new HtmlWebpackPlugin(),
     new HtmlWebpackPlugin({
-      template: './assets/map.html'
+      filename: "app.html",
+      template: path.resolve(__dirname, './assets/map.html')
     })
   ],
 
@@ -27,42 +29,32 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /.jsx?$/,
-        include: [
-          path.resolve(__dirname, 'app')
-        ],
-        exclude: [
-          path.resolve(__dirname, 'node_modules')
-        ],
-        loader: 'babel-loader',
-        query: {
-          presets: [
-            ["@babel/env", {
-              "targets": {
-                "browsers": "last 2 chrome versions"
-              }
-            }]
-          ]
+        test: /.js$/,
+        exclude: /(node_modules|bower_components)/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ['@babel/preset-env']
+          }
         }
       },
 
       {
-        test: /\.(png|svg|jpg|gif)$/,
-        loader: 'file-loader',
-        options: {
-          name(file) {
-            if (process.env.NODE_ENV === 'development') {
-              return '[path][name].[ext]';
-            }
+        test: /\.(png|svg|jpg)$/,
+        type: "asset/inline"
+      },
 
-            return '[contenthash].[ext]';
-          },
-        }
-      }
+      // {
+      //   test: /\.html/,
+      //   type: "asset/resource",
+      //   generator: {
+      //     filename: 'dist/[name].html'
+      //   }
+      // }
     ]
   },
   resolve: {
-    extensions: ['.json', '.js', '.jsx'],
+    extensions: ['.json', '.js'],
 
     alias: {
       '@core': path.resolve(__dirname, './src/core'),
